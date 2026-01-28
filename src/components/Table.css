@@ -1,0 +1,40 @@
+.table-container {
+  margin-top: 20px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+  background-color: #1e1e1e;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+}
+
+thead {
+  background-color: #333;
+}
+
+thead th {
+  font-weight: bold;
+  padding: 12px;
+  border-bottom: 2px solid #555;
+  text-align: left;
+  color: #fff;
+}
+
+tbody tr {
+  border-bottom: 1px solid #444;
+}
+
+tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+tbody td {
+  padding: 10px;
+  color: #ddd;
+}
