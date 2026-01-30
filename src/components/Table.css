@@ -9,7 +9,7 @@
   margin-right: auto;
 
   /* Altura fija + scroll */
-  max-height: 500px;
+  max-height: calc(100vh - 260px);
   overflow-y: auto;
 }
 
@@ -172,4 +172,34 @@ tbody td {
 .details-btn:active {
   transform: translateY(0px);
   box-shadow: 0 3px 8px rgba(0, 80, 120, 0.25);
+}
+
+.delete-btn {
+  background-color: #ffb3b3; /* rojo pastel suave */
+  color: #7a0000;           /* rojo oscuro */
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 6px;
+
+  box-shadow: 0 3px 8px rgba(120, 0, 0, 0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+.delete-btn:hover {
+  background-color: #ffcccc;
+  box-shadow: 0 4px 10px rgba(120, 0, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
