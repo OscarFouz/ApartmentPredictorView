@@ -3,6 +3,7 @@ import "./Table.css";
 
 export default function ApartmentTable() {
   const [apartments, setApartments] = useState([]);
+  const [selectedApartment, setSelectedApartment] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/apartments")
@@ -31,30 +32,20 @@ export default function ApartmentTable() {
             <th>Parking</th>
             <th>Pref. Area</th>
             <th>Furnishing</th>
+            <th></th>
           </tr>
         </thead>
 
         <tbody>
           {apartments.map((ap) => (
             <tr key={ap.id}>
-              {/* FOTO ALEATORIA POR APARTAMENTO */}
-              {/*
               <td>
                 <img
-                  
-                  alt="apartment"
-                  style={{ width: "80px", height: "80px", borderRadius: "6px" }}
-                />
-                /*/}
-              <td>
-                <img
-                  /*src={`https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=80&q=80`}*/
-                  /*src={`https://source.unsplash.com/featured/80x80?apartment,interior&sig=${props.id}`}*/
                   src={`https://picsum.photos/seed/${ap.id}/80/80`}
                   alt="apartment"
                   style={{
-                    width: "80px",
-                    height: "80px",
+                    width: "60px",
+                    height: "60px",
                     borderRadius: "6px",
                     objectFit: "cover",
                   }}
@@ -74,10 +65,110 @@ export default function ApartmentTable() {
               <td>{ap.parking}</td>
               <td>{ap.prefarea}</td>
               <td>{ap.furnishingstatus}</td>
+              <td>
+                <button className="details-btn" onClick={() => setSelectedApartment(ap)}>
+                  Ver detalles
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* MODAL */}
+      {selectedApartment && (
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedApartment(null)}
+        >
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={`https://picsum.photos/seed/${selectedApartment.id}/400/250`}
+              alt="apartment"
+              className="modal-image"
+            />
+
+            <div className="modal-content">
+              <h2>Detalles del Apartamento</h2>
+                <div className="modal-row">
+                  <label>Área</label>
+                  <input type="text" value={selectedApartment.area} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Precio</label>
+                  <input type="text" value={selectedApartment.price} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Habitaciones</label>
+                  <input type="text" value={selectedApartment.bedrooms} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Baños</label>
+                  <input type="text" value={selectedApartment.bathrooms} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Stories</label>
+                  <input type="text" value={selectedApartment.stories} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Main Road</label>
+                  <input type="text" value={selectedApartment.mainroad} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Guest Room</label>
+                  <input type="text" value={selectedApartment.guestroom} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Basement</label>
+                  <input type="text" value={selectedApartment.basement} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Hot Water</label>
+                  <input type="text" value={selectedApartment.hotwaterheating} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>A/C</label>
+                  <input type="text" value={selectedApartment.airconditioning} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Parking</label>
+                  <input type="text" value={selectedApartment.parking} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Pref. Area</label>
+                  <input type="text" value={selectedApartment.prefarea} readOnly />
+                </div>
+
+                <div className="modal-row">
+                  <label>Furnishing</label>
+                  <input type="text" value={selectedApartment.furnishingstatus} readOnly />
+                </div>
+
+            </div>
+
+            <div className="modal-footer">
+              <button className="edit-btn">Modificar</button>
+              <button
+                className="close-btn"
+                onClick={() => setSelectedApartment(null)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
