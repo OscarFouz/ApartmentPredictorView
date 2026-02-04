@@ -5,8 +5,15 @@ export default function ApartmentRow({ ap, onDelete, onSelect }) {
         <img
           src={`https://picsum.photos/seed/${ap.id}/80/80`}
           alt="apartment"
+          style={{
+            width: "60px",
+            height: "60px",
+            borderRadius: "6px",
+            objectFit: "cover",
+          }}
         />
       </td>
+
       <td>{ap.area}</td>
       <td>{ap.locationRating}</td>
       <td>{ap.price}</td>
@@ -23,8 +30,13 @@ export default function ApartmentRow({ ap, onDelete, onSelect }) {
       <td>{ap.furnishingstatus}</td>
 
       <td>
-        <button onClick={onSelect}>Ver detalles</button>
-        <button onClick={onDelete}>Eliminar</button>
+        <button className="details-btn" onClick={onSelect}>
+          Ver detalles
+        </button>
+
+        <button className="delete-btn" onClick={onDelete}>
+          Eliminar
+        </button>
       </td>
     </tr>
   );

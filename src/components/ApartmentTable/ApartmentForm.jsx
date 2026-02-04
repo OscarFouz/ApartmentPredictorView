@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export default function ApartmentForm({ initialData, onSubmit }) {
@@ -7,12 +8,13 @@ export default function ApartmentForm({ initialData, onSubmit }) {
     setForm({ ...form, [key]: value });
 
   return (
-    <div>
+    <div className="modal-content">
       {Object.keys(form).map((key) =>
         key === "isNew" ? null : (
-          <div key={key}>
+          <div className="modal-row" key={key}>
             <label>{key}</label>
             <input
+              type="text"
               value={form[key]}
               onChange={(e) => handleChange(key, e.target.value)}
             />
@@ -20,9 +22,11 @@ export default function ApartmentForm({ initialData, onSubmit }) {
         )
       )}
 
-      <button onClick={() => onSubmit(form)}>
-        {initialData.isNew ? "Crear" : "Guardar cambios"}
-      </button>
+      <div className="modal-footer">
+        <button className="details-btn" onClick={() => onSubmit(form)}>
+          {initialData.isNew ? "Crear" : "Guardar cambios"}
+        </button>
+      </div>
     </div>
   );
 }

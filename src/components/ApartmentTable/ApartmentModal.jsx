@@ -11,11 +11,16 @@ export default function ApartmentModal({ data, onClose, onSave }) {
               : `https://picsum.photos/seed/${data.id}/400/250`
           }
           alt="apartment"
+          className="modal-image"
         />
 
         <ApartmentForm initialData={data} onSubmit={onSave} />
 
-        <button onClick={onClose}>Cerrar</button>
+        <div className="modal-footer">
+          <button className="details-btn" onClick={onClose}>
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   );
