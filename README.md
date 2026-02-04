@@ -1,16 +1,198 @@
-# React + Vite
+# ApartmentPredictor — Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este frontend implementa una interfaz completa para gestionar apartamentos y sus reviews, conectándose al backend Spring Boot mediante llamadas REST.
 
-Currently, two official plugins are available:
+Incluye:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Tabla interactiva de apartamentos
+- Modal para ver/editar/crear apartamentos
+- Gestión de reviews por apartamento
+- Componentes desacoplados y reutilizables
+- Estilos centralizados en `Table.css`
+- Renderizado de imágenes dinámicas con Picsum
+- Arquitectura limpia y escalable
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Arquitectura del Proyecto
+```md
+src/
+│
+├── components/
+│   ├── ApartmentTable.jsx
+│   ├── ApartmentRow.jsx
+│   ├── ApartmentModal.jsx
+│   ├── ApartmentForm.jsx
+│   ├── ReviewList.jsx
+│   └── ReviewForm.jsx
+│
+├── services/
+│   ├── apartmentService.js
+│   └── reviewService.js
+│
+├── styles/
+│   └── Table.css
+│
+├── App.jsx
+├── main.jsx
+└── index.html
+```
+---
 
-## Expanding the ESLint configuration
+# Componentes Principales
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ApartmentTable.jsx
+- Renderiza la tabla completa de apartamentos.
+- Obtiene los datos desde el backend usando `apartmentService`.
+- Controla la apertura del modal.
+- Muestra columnas como:
+  - Imagen
+  - Área
+  - Precio
+  - Habitaciones
+  - Tipo de propiedad (`propertyType`)
+- Usa `<ApartmentRow />` para cada fila.
+
+---
+
+## ApartmentRow.jsx
+- Representa una fila de la tabla.
+- Muestra los datos del apartamento.
+- Incluye botones:
+  - **Ver detalles**
+  - **Eliminar**
+- Renderiza la imagen con:
+  ```
+  https://picsum.photos/seed/${ap.id}/80/80
+  ```
+
+---
+
+## ApartmentModal.jsx
+- Muestra un modal centrado en pantalla.
+- Contiene:
+  - Imagen grande del apartamento
+  - Formulario de edición/creación (`ApartmentForm`)
+  - Botón de cerrar
+- Evita cierre accidental con:
+  ```jsx
+  onClick={(e) => e.stopPropagation()}
+  ```
+
+---
+
+## ApartmentForm.jsx
+- Formulario dinámico basado en las claves del objeto.
+- Permite editar todos los campos excepto:
+  - `id`
+  - `propertyType`
+- Usa clases CSS:
+  - `.modal-row`
+  - `.modal-footer`
+  - `.details-btn`
+
+---
+
+## ReviewList.jsx
+- Lista todas las reviews del apartamento seleccionado.
+- Permite eliminar reviews.
+- Muestra:
+  - Título
+  - Contenido
+  - Rating
+  - Fecha
+
+---
+
+## ReviewForm.jsx
+- Permite añadir una nueva review.
+- Envía los datos a:
+  ```
+  POST /api/apartments/{id}/reviews
+  ```
+
+---
+
+# Servicios (API)
+
+## apartmentService.js
+
+Incluye:
+
+- `getAll()`
+- `getById(id)`
+- `create(apartment)`
+- `update(id, apartment)`
+- `remove(id)`
+- `getReviews(id)`
+- `exportJson()`
+
+Usa `fetch` o `axios` según configuración.
+
+---
+
+## reviewService.js
+
+Incluye:
+
+- `addReview(apartmentId, review)`
+- `deleteReview(reviewId)`
+
+---
+
+# Estilos — Table.css
+
+Define:
+
+- Tabla con header sticky
+- Botones `.details-btn` y `.delete-btn`
+- Modal centrado con overlay
+- Inputs estilizados
+- Layout compacto y profesional
+
+---
+
+# Conexión con Backend
+
+El frontend se conecta al backend en:
+
+```
+http://localhost:8080/api
+```
+
+Asegúrate de que el backend tenga:
+
+```
+@CrossOrigin(origins = "http://localhost:5173")
+```
+
+---
+
+# Ejecución
+
+Instalar dependencias:
+
+```
+npm install
+```
+
+Iniciar servidor:
+
+```
+npm run dev
+```
+
+Abrir en navegador:
+
+```
+http://localhost:5173
+```
+
+---
+
+# Estado del Proyecto
+
+- Frontend funcional y conectado al backend
+- Modal y tabla completamente estilizados
+- Gestión de reviews integrada
+- Arquitectura limpia y escalable
