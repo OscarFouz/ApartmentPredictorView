@@ -1,20 +1,29 @@
-const API = "http://localhost:8080/api/apartments";
+// src/services/apartmentService.js
+import axios from "axios";
 
-export const getApartments = () => fetch(API).then(res => res.json());
+const api = axios.create({
+  baseURL: "http://localhost:8080/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-export const deleteApartment = (id) =>
-  fetch(`${API}/${id}`, { method: "DELETE" });
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    console.error("API Error:", err);
+    return Promise.reject(err);
+  }
+);
 
-export const createApartment = (data) =>
-  fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  }).then(res => res.json());
+export const apartmentService = {
+  getAll: () => api.get("/apartments").then((res) => res.data),
 
-export const updateApartment = (id, data) =>
-  fetch(`${API}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  }).then(res => res.json());
+  delete: (id) => api.delete(`/apartments/${id}`),
+
+  create: (data) =>
+    api.post("/apartments", data).then((res) => res.data),
+
+  update: (id, data) =>
+    api.put(`/apartments/${id}`, data).then((res) => res.data),
+};

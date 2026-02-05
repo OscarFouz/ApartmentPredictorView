@@ -5,8 +5,23 @@ import ApartmentModal from "./ApartmentModal";
 import "../Table.css";
 
 export default function ApartmentTable() {
-  const { apartments, remove, add, edit } = useApartments();
+  //const { apartments, remove, add, edit } = useApartments();
+  const { apartments, isLoading, isAxiosError, remove, add, edit } = useApartments();
   const [modalData, setModalData] = useState(null);
+
+ // ============================
+  // LOADING
+  // ============================
+  if (isLoading) {
+    return <p style={{ textAlign: "center" }}>Cargando apartamentos...</p>;
+  }
+
+  // ============================
+  // ERROR
+  // ============================
+  if (isAxiosError) {
+    return <p style={{ textAlign: "center", color: "red" }}>Error cargando datos.</p>;
+  }
 
   return (
     <>
