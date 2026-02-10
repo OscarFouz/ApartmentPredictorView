@@ -1,27 +1,42 @@
 import { useState } from "react";
 import { useApartments } from "../../hooks/useApartments";
+import { useReviews } from "../../hooks/useReviews";
 import ApartmentRow from "./ApartmentRow";
 import ApartmentModal from "./ApartmentModal";
+import ReviewModal from "../Reviews/ReviewModal";
+import ReviewFormModal from "../Reviews/ReviewFormModal";
 import "../Table.css";
 
 export default function ApartmentTable() {
-  //const { apartments, remove, add, edit } = useApartments();
-  const { apartments, isLoading, isAxiosError, remove, add, edit } = useApartments();
+  // Combinación correcta de ambas versiones
+  const {
+    apartments,
+    isLoading,
+    isAxiosError,
+    remove,
+    add,
+    edit,
+    loadApartments,
+  } = useApartments();
+
+  const { reviews, loadReviews, addReview } = useReviews();
+
   const [modalData, setModalData] = useState(null);
+  const [reviewModal, setReviewModal] = useState(null);
+  const [reviewFormModal, setReviewFormModal] = useState(null);
 
- // ============================
-  // LOADING
-  // ============================
-  if (isLoading) {
-    return <p style={{ textAlign: "center" }}>Cargando apartamentos...</p>;
-  }
+  // Ver reviews correctas
+  const openReviews = async (ap) => {
+    const data = await loadReviews(ap.id);
+    setReviewModal({ apartment: ap, reviews: data });
+  };
 
-  // ============================
-  // ERROR
-  // ============================
-  if (isAxiosError) {
-    return <p style={{ textAlign: "center", color: "red" }}>Error cargando datos.</p>;
-  }
+  const openReviewForm = (ap) => {
+    setReviewFormModal({ apartment: ap });
+  };
+
+  if (isLoading) return <p>Cargando apartamentos...</p>;
+  if (isAxiosError) return <p>Error cargando datos.</p>;
 
   return (
     <>
@@ -55,49 +70,50 @@ export default function ApartmentTable() {
                 ap={ap}
                 onDelete={() => remove(ap.id)}
                 onSelect={() => setModalData(ap)}
+                onAddReview={() => openReviewForm(ap)}
+                onShowReviews={() => openReviews(ap)}
               />
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="button-wrapper">
-        <button
-          className="details-btn"
-          onClick={() =>
-            setModalData({
-              isNew: true,
-              area: "",
-              price: "",
-              bedrooms: "",
-              bathrooms: "",
-              stories: "",
-              mainroad: "",
-              guestroom: "",
-              basement: "",
-              hotwaterheating: "",
-              airconditioning: "",
-              parking: "",
-              prefarea: "",
-              furnishingstatus: "",
-            })
-          }
-        >
-          Nuevo Apartamento
-        </button>
-      </div>
-
+      {/* MODAL DETALLES */}
       {modalData && (
         <ApartmentModal
           data={modalData}
           onClose={() => setModalData(null)}
           onSave={(formData) => {
-            if (modalData.isNew) {
-              add(formData);
-            } else {
-              edit(formData);
-            }
+            if (modalData.isNew) add(formData);
+            else edit(formData);
             setModalData(null);
+          }}
+        />
+      )}
+
+      {/* MODAL VER REVIEWS */}
+      {reviewModal && (
+        <ReviewModal
+          reviews={reviewModal.reviews}
+          onClose={() => setReviewModal(null)}
+        />
+      )}
+
+      {/* MODAL NUEVA REVIEW */}
+      {reviewFormModal && (
+        <ReviewFormModal
+          onClose={() => setReviewFormModal(null)}
+          onSave={async (form) => {
+            // 1️ Guardar review
+            await addReview(reviewFormModal.apartment.id, form);
+
+            // 2️ Cerrar modal de crear review
+            setReviewFormModal(null);
+
+            // 3️ Recargar apartamentos para que aparezca el botón "Ver reviews"
+            await loadApartments();
+
+            // 4️ NO abrir modal de ver reviews automáticamente
           }}
         />
       )}

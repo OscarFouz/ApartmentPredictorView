@@ -1,4 +1,10 @@
-export default function ApartmentRow({ ap, onDelete, onSelect }) {
+export default function ApartmentRow({
+  ap,
+  onDelete,
+  onSelect,
+  onShowReviews,
+  onAddReview,
+}) {
   return (
     <tr>
       <td>
@@ -33,6 +39,16 @@ export default function ApartmentRow({ ap, onDelete, onSelect }) {
         <button className="details-btn" onClick={onSelect}>
           Ver detalles
         </button>
+
+        <button className="details-btn" onClick={onAddReview}>
+          Añadir review
+        </button>
+
+          {ap.reviews?.length > 0 && (
+            <button className="details-btn" onClick={onShowReviews}>
+              Ver reviews
+            </button>
+          )}
 
         <button className="delete-btn" onClick={onDelete}>
           Eliminar
