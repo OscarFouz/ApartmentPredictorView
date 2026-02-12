@@ -1,3 +1,5 @@
+// src/components/ApartmentTable/ApartmentTable.jsx
+
 import { useState } from "react";
 import { useApartments } from "../../hooks/useApartments";
 import { useReviews } from "../../hooks/useReviews";
@@ -8,7 +10,6 @@ import ReviewFormModal from "../Reviews/ReviewFormModal";
 import "../Table.css";
 
 export default function ApartmentTable() {
-  // Combinación correcta de ambas versiones
   const {
     apartments,
     isLoading,
@@ -19,13 +20,12 @@ export default function ApartmentTable() {
     loadApartments,
   } = useApartments();
 
-  const { reviews, loadReviews, addReview } = useReviews();
+  const { loadReviews, addReview } = useReviews();
 
   const [modalData, setModalData] = useState(null);
   const [reviewModal, setReviewModal] = useState(null);
   const [reviewFormModal, setReviewFormModal] = useState(null);
 
-  // Ver reviews correctas
   const openReviews = async (ap) => {
     const data = await loadReviews(ap.id);
     setReviewModal({ apartment: ap, reviews: data });
@@ -40,6 +40,7 @@ export default function ApartmentTable() {
 
   return (
     <>
+      {/* TABLA */}
       <div className="table-container">
         <table>
           <thead>
@@ -78,7 +79,34 @@ export default function ApartmentTable() {
         </table>
       </div>
 
-      {/* MODAL DETALLES */}
+      {/* BOTÓN NUEVO APARTAMENTO */}
+      <div className="button-wrapper">
+        <button
+          className="details-btn"
+          onClick={() =>
+            setModalData({
+              isNew: true,
+              area: "",
+              price: "",
+              bedrooms: "",
+              bathrooms: "",
+              stories: "",
+              mainroad: "",
+              guestroom: "",
+              basement: "",
+              hotwaterheating: "",
+              airconditioning: "",
+              parking: "",
+              prefarea: "",
+              furnishingstatus: "",
+            })
+          }
+        >
+          Nuevo Apartamento
+        </button>
+      </div>
+      
+      {/* MODAL DETALLES / CREAR */}
       {modalData && (
         <ApartmentModal
           data={modalData}
@@ -104,16 +132,9 @@ export default function ApartmentTable() {
         <ReviewFormModal
           onClose={() => setReviewFormModal(null)}
           onSave={async (form) => {
-            // 1️ Guardar review
             await addReview(reviewFormModal.apartment.id, form);
-
-            // 2️ Cerrar modal de crear review
             setReviewFormModal(null);
-
-            // 3️ Recargar apartamentos para que aparezca el botón "Ver reviews"
             await loadApartments();
-
-            // 4️ NO abrir modal de ver reviews automáticamente
           }}
         />
       )}
