@@ -1,15 +1,23 @@
-//import { RoleContext } from "../context/RoleContext";
-import { useRole } from "../../hooks/useRole";
+import { useEffect, useState } from "react";
+import { useRole } from "../context/RoleContext.jsx";
 
-export default function PropertyTable({ properties }) {
+export default function TownHousePage() {
+  const [townhouses, setTownhouses] = useState([]);
   const { role } = useRole();
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/townhouses")
+      .then((res) => res.json())
+      .then((data) => setTownhouses(data));
+  }, []);
 
   return (
     <div className="table-container">
+      <h2>TownHouses</h2>
+
       <table className="property-table">
         <thead>
           <tr>
-            <th>Tipo</th>
             <th>Nombre</th>
             <th>Dirección</th>
             <th>Owner</th>
@@ -19,13 +27,12 @@ export default function PropertyTable({ properties }) {
         </thead>
 
         <tbody>
-          {properties.map((p) => (
-            <tr key={p.id}>
-              <td>{p.property_type}</td>
-              <td>{p.name}</td>
-              <td>{p.address}</td>
-              <td>{p.owner?.fullName ?? "Sin owner"}</td>
-              <td>{p.price ? `${p.price} €` : "—"}</td>
+          {townhouses.map((t) => (
+            <tr key={t.id}>
+              <td>{t.name}</td>
+              <td>{t.address}</td>
+              <td>{t.owner?.fullName ?? "Sin owner"}</td>
+              <td>{t.price ? `${t.price} €` : "—"}</td>
 
               <td className="actions">
                 <button>Ver</button>

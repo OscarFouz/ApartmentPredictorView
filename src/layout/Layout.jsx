@@ -1,4 +1,3 @@
-// src/layout/Layout.jsx
 import React from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";

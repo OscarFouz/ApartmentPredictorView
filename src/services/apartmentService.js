@@ -18,12 +18,7 @@ api.interceptors.response.use(
 
 export const apartmentService = {
   getAll: () => api.get("/apartments").then((res) => res.data),
-
   delete: (id) => api.delete(`/apartments/${id}`),
-
-  create: (data) =>
-    api.post("/apartments", data).then((res) => res.data),
-
-  update: (id, data) =>
-    api.put(`/apartments/${id}`, data).then((res) => res.data),
+  create: (data) => api.post("/apartments", data).then((res) => res.data),
+  update: (id, data) => api.put(`/apartments/${id}`, data).then((res) => res.data),
 };

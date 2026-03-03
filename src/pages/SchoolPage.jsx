@@ -1,37 +1,43 @@
-//import { RoleContext } from "../context/RoleContext";
-import { useRole } from "../../hooks/useRole";
+import { useEffect, useState } from "react";
+import { useRole } from "../context/RoleContext.jsx";
 
-export default function PropertyTable({ properties }) {
+export default function SchoolPage() {
+  const [schools, setSchools] = useState([]);
   const { role } = useRole();
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/schools")
+      .then((res) => res.json())
+      .then((data) => setSchools(data));
+  }, []);
 
   return (
     <div className="table-container">
+      <h2>Escuelas</h2>
+
       <table className="property-table">
         <thead>
           <tr>
-            <th>Tipo</th>
             <th>Nombre</th>
             <th>Dirección</th>
-            <th>Owner</th>
-            <th>Precio</th>
+            <th>Tipo</th>
+            <th>Nivel</th>
+            <th>Rating</th>
             <th>Acciones</th>
           </tr>
         </thead>
 
         <tbody>
-          {properties.map((p) => (
-            <tr key={p.id}>
-              <td>{p.property_type}</td>
-              <td>{p.name}</td>
-              <td>{p.address}</td>
-              <td>{p.owner?.fullName ?? "Sin owner"}</td>
-              <td>{p.price ? `${p.price} €` : "—"}</td>
+          {schools.map((s) => (
+            <tr key={s.id}>
+              <td>{s.name}</td>
+              <td>{s.address}</td>
+              <td>{s.type}</td>
+              <td>{s.educationLevel}</td>
+              <td>{s.rating}</td>
 
               <td className="actions">
                 <button>Ver</button>
-                <button>Reviews</button>
-
-                {role === "USER" && <button>Crear review</button>}
 
                 {role === "ADMIN" && (
                   <>

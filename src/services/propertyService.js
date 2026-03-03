@@ -20,12 +20,7 @@ export const propertyService = {
     ];
   },
 
-  create: (type, data) =>
-    axios.post(`${API}/${type.toLowerCase()}s`, data),
-
-  update: (type, id, data) =>
-    axios.put(`${API}/${type.toLowerCase()}s/${id}`, data),
-
-  delete: (type, id) =>
-    axios.delete(`${API}/${type.toLowerCase()}s/${id}`),
+  create: (type, data) => axios.post(`${API}/${type.toLowerCase()}s`, data),
+  update: (type, id, data) => axios.put(`${API}/${type.toLowerCase()}s/${id}`, data),
+  delete: (type, id) => axios.delete(`${API}/${type.toLowerCase()}s/${id}`),
 };

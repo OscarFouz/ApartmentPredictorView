@@ -7,7 +7,7 @@ export default function PropertyRow({ property, onEdit, onDelete, onReviews }) {
       <td>{property.property_type}</td>
       <td>{property.name}</td>
       <td>{property.address}</td>
-      <td>{property.owner?.fullName || "—"}</td>
+      <td>{property.price} €</td>
 
       <td>
         <button onClick={() => onEdit(property)}>Editar</button>
