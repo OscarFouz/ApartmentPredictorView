@@ -1,11 +1,12 @@
+// src/pages/relations/PropertyReviewRelationsPage.jsx
 import { useEffect, useState } from "react";
-import { getAllProperties } from "../../services/PropertyService";
+import { propertyService } from "../../services/propertyService";
 
 export default function PropertyReviewRelationsPage() {
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
-    getAllProperties().then(setProperties);
+    propertyService.getAll().then(setProperties);
   }, []);
 
   return (

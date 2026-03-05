@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
-import { useRole } from "../context/RoleContext.jsx";
+import { useProperties } from "../hooks/useProperties";
+import { useRole } from "../hooks/useRole";
 
 export default function DuplexPage() {
-  const [duplexes, setDuplexes] = useState([]);
+  const { properties } = useProperties();
   const { role } = useRole();
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/duplex")
-      .then((res) => res.json())
-      .then((data) => setDuplexes(data));
-  }, []);
+  const duplexes = properties.filter(p => p.property_type === "DUPLEX");
 
   return (
     <div className="table-container">

@@ -1,53 +1,51 @@
-// src/pages/PropertiesPage.jsx
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import { useProperties } from "../hooks/useProperties";
+import { useRole } from "../hooks/useRole";
+
 import PropertyTable from "../components/properties/PropertyTable";
 import PropertyModal from "../components/properties/PropertyModal";
-//import ReviewListModal from "../components/reviews/ReviewListModal";
-import ReviewListModal from "../components/reviews/ReviewListModal.jsx";
-import { useProperties } from "../hooks/useProperties";
-import { reviewService } from "../services/reviewService";
+import ReviewListModal from "../components/reviews/ReviewListModal";
 
 export default function PropertiesPage() {
-  const { properties, load, edit, remove } = useProperties();
+  const { properties } = useProperties();
+  const { role } = useRole();
 
-  const [selected, setSelected] = useState(null);
-  const [reviews, setReviews] = useState([]);
-  const [showReviews, setShowReviews] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [showPropertyModal, setShowPropertyModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
-  useEffect(() => { load(); }, []);
+  const openEditModal = (property) => {
+    setSelectedProperty(property);
+    setShowPropertyModal(true);
+  };
 
-  const openEdit = p => setSelected(p);
-  const closeEdit = () => setSelected(null);
-
-  const openReviews = async p => {
-    const data = await reviewService.getByProperty(p.id);
-    setReviews(data);
-    setShowReviews(true);
+  const openReviewModal = (property) => {
+    setSelectedProperty(property);
+    setShowReviewModal(true);
   };
 
   return (
-    <div>
+    <div className="table-container">
       <h2>Propiedades</h2>
 
       <PropertyTable
         properties={properties}
-        onEdit={openEdit}
-        onDelete={remove}
-        onReviews={openReviews}
+        role={role}
+        onEdit={openEditModal}
+        onShowReviews={openReviewModal}
       />
 
-      {selected && (
+      {showPropertyModal && (
         <PropertyModal
-          property={selected}
-          onSave={data => { edit(selected.property_type, selected.id, data); closeEdit(); }}
-          onClose={closeEdit}
+          property={selectedProperty}
+          onClose={() => setShowPropertyModal(false)}
         />
       )}
 
-      {showReviews && (
+      {showReviewModal && (
         <ReviewListModal
-          reviews={reviews}
-          onClose={() => setShowReviews(false)}
+          property={selectedProperty}
+          onClose={() => setShowReviewModal(false)}
         />
       )}
     </div>

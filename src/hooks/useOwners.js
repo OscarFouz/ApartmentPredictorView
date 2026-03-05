@@ -5,24 +5,29 @@ import { ownerService } from "../services/ownerService";
 export function useOwners() {
   const [owners, setOwners] = useState([]);
 
-  const load = async () => {
-    setOwners(await ownerService.getAll());
+  const load = () => {
+    ownerService.getAll().then(setOwners);
   };
 
-  const add = async owner => {
-    await ownerService.create(owner);
-    await load();
+  const create = (data) => {
+    return ownerService.create(data).then((newOwner) => {
+      setOwners((prev) => [...prev, newOwner]);
+    });
   };
 
-  const edit = async (id, owner) => {
-    await ownerService.update(id, owner);
-    await load();
+  const edit = (id, data) => {
+    return ownerService.update(id, data).then((updated) => {
+      setOwners((prev) =>
+        prev.map((o) => (o.id === updated.id ? updated : o))
+      );
+    });
   };
 
-  const remove = async id => {
-    await ownerService.delete(id);
-    setOwners(prev => prev.filter(o => o.id !== id));
+  const remove = (id) => {
+    return ownerService.delete(id).then(() => {
+      setOwners((prev) => prev.filter((o) => o.id !== id));
+    });
   };
 
-  return { owners, load, add, edit, remove };
+  return { owners, load, create, edit, remove };
 }

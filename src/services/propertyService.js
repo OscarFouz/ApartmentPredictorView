@@ -1,26 +1,55 @@
 // src/services/propertyService.js
-import axios from "axios";
 
 const API = "http://localhost:8080/api";
 
+async function fetchJson(url, options = {}) {
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+
+  if (!res.ok) throw new Error(`Error en ${url}`);
+  return res.json();
+}
+
 export const propertyService = {
-  getAll: async () => {
-    const [ap, hs, dx, tw] = await Promise.all([
-      axios.get(`${API}/apartments`),
-      axios.get(`${API}/houses`),
-      axios.get(`${API}/duplexes`),
-      axios.get(`${API}/townhouses`)
+  // 🔹 Cargar TODAS las propiedades desde 4 endpoints
+  async getAll() {
+    const [apartments, houses, duplexes, townhouses] = await Promise.all([
+      fetchJson(`${API}/apartments`),
+      fetchJson(`${API}/houses`),
+      fetchJson(`${API}/duplexes`),
+      fetchJson(`${API}/townhouses`),
     ]);
 
     return [
-      ...ap.data.map(p => ({ ...p, property_type: "APARTMENT" })),
-      ...hs.data.map(p => ({ ...p, property_type: "HOUSE" })),
-      ...dx.data.map(p => ({ ...p, property_type: "DUPLEX" })),
-      ...tw.data.map(p => ({ ...p, property_type: "TOWNHOUSE" })),
+      ...apartments.map(a => ({ ...a, property_type: "APARTMENT" })),
+      ...houses.map(h => ({ ...h, property_type: "HOUSE" })),
+      ...duplexes.map(d => ({ ...d, property_type: "DUPLEX" })),
+      ...townhouses.map(t => ({ ...t, property_type: "TOWNHOUSE" })),
     ];
   },
 
-  create: (type, data) => axios.post(`${API}/${type.toLowerCase()}s`, data),
-  update: (type, id, data) => axios.put(`${API}/${type.toLowerCase()}s/${id}`, data),
-  delete: (type, id) => axios.delete(`${API}/${type.toLowerCase()}s/${id}`),
+  // 🔹 Crear propiedad según tipo
+  create(type, data) {
+    return fetchJson(`${API}/${type.toLowerCase()}s`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  // 🔹 Actualizar propiedad según tipo
+  update(type, id, data) {
+    return fetchJson(`${API}/${type.toLowerCase()}s/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  // 🔹 Eliminar propiedad según tipo
+  delete(type, id) {
+    return fetchJson(`${API}/${type.toLowerCase()}s/${id}`, {
+      method: "DELETE",
+    });
+  },
 };

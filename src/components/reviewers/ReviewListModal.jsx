@@ -1,4 +1,3 @@
-// src/components/reviews/ReviewListModal.jsx
 import { useEffect, useState } from "react";
 import { reviewService } from "../../services/reviewService";
 
@@ -6,7 +5,9 @@ export default function ReviewListModal({ property, onClose }) {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    reviewService.getByProperty(property.id).then(setReviews);
+    reviewService.getByProperty(property.id).then((res) => {
+      setReviews(res.data);
+    });
   }, [property.id]);
 
   return (

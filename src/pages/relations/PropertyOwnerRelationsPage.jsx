@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
+// src/pages/relations/PropertyOwnerRelationsPage.jsx
+import { useProperties } from "../../hooks/useProperties";
 import { useRole } from "../../hooks/useRole";
 
 export default function PropertyOwnerRelationsPage() {
-  const [properties, setProperties] = useState([]);
+  const { properties } = useProperties();
   const { role } = useRole();
-
-  useEffect(() => {
-    fetch("http://localhost:8080/api/properties")
-      .then((res) => res.json())
-      .then((data) => setProperties(data));
-  }, []);
 
   return (
     <div className="table-container">
@@ -19,7 +14,7 @@ export default function PropertyOwnerRelationsPage() {
         <thead>
           <tr>
             <th>Tipo</th>
-            <th>Nombre Propiedad</th>
+            <th>Propiedad</th>
             <th>Dirección</th>
             <th>Owner</th>
             <th>Email</th>

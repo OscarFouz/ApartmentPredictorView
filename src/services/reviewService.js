@@ -1,31 +1,43 @@
 // src/services/reviewService.js
 
-const API_URL = "http://localhost:8080/api/reviews";
+const API = "http://localhost:8080/api/reviews";
+
+async function fetchJson(url, options = {}) {
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+
+  if (!res.ok) throw new Error(`Error en ${url}`);
+  return res.json();
+}
 
 export const reviewService = {
-  async getReviewsByProperty(propertyId) {
-    const res = await fetch(`${API_URL}/property/${propertyId}`);
-    if (!res.ok) throw new Error("Error al obtener las reviews");
-    return res.json();
+  getAll() {
+    return fetchJson(API);
   },
 
-  async createReview(reviewData) {
-    const res = await fetch(`${API_URL}`, {
+  getByProperty(propertyId) {
+    return fetchJson(`${API}/property/${propertyId}`);
+  },
+
+  create(data) {
+    return fetchJson(API, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(reviewData)
+      body: JSON.stringify(data),
     });
-
-    if (!res.ok) throw new Error("Error al crear la review");
-    return res.json();
   },
 
-  async deleteReview(reviewId) {
-    const res = await fetch(`${API_URL}/${reviewId}`, {
-      method: "DELETE"
+  update(id, data) {
+    return fetchJson(`${API}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
     });
+  },
 
-    if (!res.ok) throw new Error("Error al eliminar la review");
-    return true;
-  }
+  delete(id) {
+    return fetchJson(`${API}/${id}`, {
+      method: "DELETE",
+    });
+  },
 };

@@ -5,24 +5,29 @@ import { reviewerService } from "../services/reviewerService";
 export function useReviewers() {
   const [reviewers, setReviewers] = useState([]);
 
-  const load = async () => {
-    setReviewers(await reviewerService.getAll());
+  const load = () => {
+    reviewerService.getAll().then(setReviewers);
   };
 
-  const add = async reviewer => {
-    await reviewerService.create(reviewer);
-    await load();
+  const create = (data) => {
+    return reviewerService.create(data).then((newReviewer) => {
+      setReviewers((prev) => [...prev, newReviewer]);
+    });
   };
 
-  const edit = async (id, reviewer) => {
-    await reviewerService.update(id, reviewer);
-    await load();
+  const edit = (id, data) => {
+    return reviewerService.update(id, data).then((updated) => {
+      setReviewers((prev) =>
+        prev.map((r) => (r.id === updated.id ? updated : r))
+      );
+    });
   };
 
-  const remove = async id => {
-    await reviewerService.delete(id);
-    setReviewers(prev => prev.filter(r => r.id !== id));
+  const remove = (id) => {
+    return reviewerService.delete(id).then(() => {
+      setReviewers((prev) => prev.filter((r) => r.id !== id));
+    });
   };
 
-  return { reviewers, load, add, edit, remove };
+  return { reviewers, load, create, edit, remove };
 }

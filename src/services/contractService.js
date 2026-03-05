@@ -1,6 +1,6 @@
-// src/services/ownerService.js
+// src/services/contractService.js
 
-const API = "http://localhost:8080/api/owners";
+const API = "http://localhost:8080/api/contracts";
 
 async function fetchJson(url, options = {}) {
   const res = await fetch(url, {
@@ -12,7 +12,7 @@ async function fetchJson(url, options = {}) {
   return res.json();
 }
 
-export const ownerService = {
+export const contractService = {
   getAll() {
     return fetchJson(API);
   },

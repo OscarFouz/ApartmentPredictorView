@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
-import { useRole } from "../context/RoleContext.jsx";
+import { useProperties } from "../hooks/useProperties";
+import { useRole } from "../hooks/useRole";
+
 
 export default function HousePage() {
-  const [houses, setHouses] = useState([]);
+ const { properties } = useProperties();
   const { role } = useRole();
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/houses")
-      .then((res) => res.json())
-      .then((data) => setHouses(data));
-  }, []);
+  const houses = properties.filter(p => p.property_type === "HOUSE");
 
   return (
     <div className="table-container">

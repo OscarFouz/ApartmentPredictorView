@@ -4,7 +4,7 @@ import OwnerRow from "./OwnerRow";
 
 export default function OwnerTable({ owners, onEdit, onDelete }) {
   return (
-    <table className="table">
+    <table className="property-table">
       <thead>
         <tr>
           <th>Nombre</th>
