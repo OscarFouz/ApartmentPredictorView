@@ -1,13 +1,20 @@
 // src/pages/relations/PropertySchoolRelationsPage.jsx
 import { useEffect, useState } from "react";
 import { propertyService } from "../../services/propertyService";
+import { useFilters } from "../../hooks/useFilters";
 
 export default function PropertySchoolRelationsPage() {
   const [properties, setProperties] = useState([]);
+  const { type } = useFilters();
 
   useEffect(() => {
     propertyService.getAll().then(setProperties);
   }, []);
+
+  // Aplicar filtro por tipo
+  const filtered = properties.filter(
+    (p) => !type || p.property_type === type
+  );
 
   return (
     <div className="table-container">
@@ -24,7 +31,7 @@ export default function PropertySchoolRelationsPage() {
         </thead>
 
         <tbody>
-          {properties.map((p) => (
+          {filtered.map((p) => (
             <tr key={p.id}>
               <td>{p.name}</td>
               <td>{p.property_type}</td>

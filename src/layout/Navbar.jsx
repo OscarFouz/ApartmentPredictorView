@@ -1,15 +1,15 @@
-import { useEffect } from "react";
+// src/layout/Navbar.jsx
+import { useFilters } from "../hooks/useFilters";
 import { useTheme } from "../hooks/useTheme";
 import { useRole } from "../hooks/useRole";
 
-export default function Navbar({ type, setType, maxPrice, setMaxPrice }) {
+export default function Navbar() {
+  const { type, setType, maxPrice, setMaxPrice } = useFilters();
   const { theme, setTheme } = useTheme();
   const { role, changeRole } = useRole();
 
   return (
     <nav className="navbar">
-
-      {/* 🏠 Título visible */}
       <h1 className="navbar-title">Apartment Predictor</h1>
 
       <div className="filters">
@@ -30,8 +30,6 @@ export default function Navbar({ type, setType, maxPrice, setMaxPrice }) {
       </div>
 
       <div className="right-side">
-
-        {/* 🔵 Selector de tema */}
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
@@ -51,7 +49,6 @@ export default function Navbar({ type, setType, maxPrice, setMaxPrice }) {
           <option value="glass">🧊 Glass</option>
         </select>
 
-        {/* 🔐 Selector de rol */}
         <div className="role-wrapper">
           <button onClick={() => changeRole(role === "ADMIN" ? "USER" : "ADMIN")}>
             Rol: {role === "ADMIN" ? "Cambiar a Usuario" : "Cambiar a Admin"}

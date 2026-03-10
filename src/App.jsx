@@ -1,9 +1,11 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Providers globales
 import { RoleProvider } from "./context/RoleProvider";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { PropertyProvider } from "./context/PropertyProvider";
+import { FiltersProvider } from "./context/FiltersProvider";
 
 // Layout
 import Layout from "./layout/Layout";
@@ -29,27 +31,29 @@ export default function App() {
     <RoleProvider>
       <ThemeProvider>
         <PropertyProvider>
-          <Router>
-            <Layout>
-              <Routes>
-                <Route path="/properties" element={<PropertiesPage />} />
-                <Route path="/owners" element={<OwnersPage />} />
-                <Route path="/duplex" element={<DuplexPage />} />
-                <Route path="/houses" element={<HousePage />} />
-                <Route path="/townhouses" element={<TownHousePage />} />
-                <Route path="/reviews" element={<ReviewPage />} />
-                <Route path="/schools" element={<SchoolPage />} />
-                <Route path="/contracts" element={<ContractPage />} />
+          <FiltersProvider>
+            <Router>
+              <Layout>
+                <Routes>
+                  <Route path="/properties" element={<PropertiesPage />} />
+                  <Route path="/owners" element={<OwnersPage />} />
+                  <Route path="/duplex" element={<DuplexPage />} />
+                  <Route path="/houses" element={<HousePage />} />
+                  <Route path="/townhouses" element={<TownHousePage />} />
+                  <Route path="/reviews" element={<ReviewPage />} />
+                  <Route path="/schools" element={<SchoolPage />} />
+                  <Route path="/contracts" element={<ContractPage />} />
 
-                <Route path="/relations/property-owner" element={<PropertyOwnerRelationsPage />} />
-                <Route path="/relations/property-school" element={<PropertySchoolRelationsPage />} />
-                <Route path="/relations/property-review" element={<PropertyReviewRelationsPage />} />
-                <Route path="/relations/property-contract" element={<PropertyContractRelationsPage />} />
+                  <Route path="/relations/property-owner" element={<PropertyOwnerRelationsPage />} />
+                  <Route path="/relations/property-school" element={<PropertySchoolRelationsPage />} />
+                  <Route path="/relations/property-review" element={<PropertyReviewRelationsPage />} />
+                  <Route path="/relations/property-contract" element={<PropertyContractRelationsPage />} />
 
-                <Route path="*" element={<PropertiesPage />} />
-              </Routes>
-            </Layout>
-          </Router>
+                  <Route path="*" element={<PropertiesPage />} />
+                </Routes>
+              </Layout>
+            </Router>
+          </FiltersProvider>
         </PropertyProvider>
       </ThemeProvider>
     </RoleProvider>

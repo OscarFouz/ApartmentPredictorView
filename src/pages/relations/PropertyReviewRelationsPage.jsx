@@ -1,13 +1,20 @@
 // src/pages/relations/PropertyReviewRelationsPage.jsx
 import { useEffect, useState } from "react";
 import { propertyService } from "../../services/propertyService";
+import { useFilters } from "../../hooks/useFilters";
 
 export default function PropertyReviewRelationsPage() {
   const [properties, setProperties] = useState([]);
+  const { type } = useFilters();
 
   useEffect(() => {
     propertyService.getAll().then(setProperties);
   }, []);
+
+  // Aplicar filtro por tipo
+  const filtered = properties.filter(
+    (p) => !type || p.property_type === type
+  );
 
   return (
     <div className="table-container">
@@ -23,13 +30,15 @@ export default function PropertyReviewRelationsPage() {
         </thead>
 
         <tbody>
-          {properties.map((p) => (
+          {filtered.map((p) => (
             <tr key={p.id}>
               <td>{p.name}</td>
               <td>{p.property_type}</td>
               <td>
                 {p.reviews?.length > 0
-                  ? p.reviews.map((r) => `${r.title} (${r.rating}/5)`).join(", ")
+                  ? p.reviews
+                      .map((r) => `${r.title} (${r.rating}/5)`)
+                      .join(", ")
                   : "Sin reviews"}
               </td>
             </tr>

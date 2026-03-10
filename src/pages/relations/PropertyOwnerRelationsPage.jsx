@@ -1,10 +1,17 @@
 // src/pages/relations/PropertyOwnerRelationsPage.jsx
 import { useProperties } from "../../hooks/useProperties";
 import { useRole } from "../../hooks/useRole";
+import { useFilters } from "../../hooks/useFilters";
 
 export default function PropertyOwnerRelationsPage() {
   const { properties } = useProperties();
   const { role } = useRole();
+  const { type } = useFilters();
+
+  // Aplicar filtro por tipo
+  const filtered = properties.filter(
+    (p) => !type || p.property_type === type
+  );
 
   return (
     <div className="table-container">
@@ -23,7 +30,7 @@ export default function PropertyOwnerRelationsPage() {
         </thead>
 
         <tbody>
-          {properties.map((p) => (
+          {filtered.map((p) => (
             <tr key={p.id}>
               <td>{p.property_type}</td>
               <td>{p.name}</td>
