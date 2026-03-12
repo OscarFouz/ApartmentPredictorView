@@ -6,7 +6,7 @@ import { useRole } from "../hooks/useRole";
 export default function Navbar() {
   const { type, setType, maxPrice, setMaxPrice } = useFilters();
   const { theme, setTheme } = useTheme();
-  const { role, changeRole } = useRole();
+  const { role, reviewers, selectedReviewerId, selectReviewer } = useRole();
 
   return (
     <nav className="navbar">
@@ -30,6 +30,7 @@ export default function Navbar() {
       </div>
 
       <div className="right-side">
+        {/* Selector de tema */}
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
@@ -49,12 +50,20 @@ export default function Navbar() {
           <option value="glass">🧊 Glass</option>
         </select>
 
-        <div className="role-wrapper">
-          <button onClick={() => changeRole(role === "ADMIN" ? "USER" : "ADMIN")}>
-            Rol: {role === "ADMIN" ? "Cambiar a Usuario" : "Cambiar a Admin"}
-          </button>
-          <span>Actual: {role}</span>
-        </div>
+        {/* Selector de usuario (ADMIN + reviewers) */}
+        <select
+          value={selectedReviewerId}
+          onChange={(e) => selectReviewer(e.target.value)}
+        >
+          {Array.isArray(reviewers) &&
+            reviewers.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.fullName}
+              </option>
+            ))}
+        </select>
+
+        <span>Rol: {role}</span>
       </div>
     </nav>
   );
