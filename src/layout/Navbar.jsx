@@ -4,7 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useRole } from "../hooks/useRole";
 
 export default function Navbar() {
-  const { type, setType, maxPrice, setMaxPrice } = useFilters();
+  const { type, setType, maxPrice, setMaxPrice, maxDistance, setMaxDistance } = useFilters();
   const { theme, setTheme } = useTheme();
   const { role, reviewers, selectedReviewerId, selectReviewer } = useRole();
 
@@ -26,6 +26,14 @@ export default function Navbar() {
           placeholder="Precio máximo"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
+        />
+
+        {/* 🔵 NUEVO FILTRO DE DISTANCIA */}
+        <input
+          type="number"
+          placeholder="Distancia máx (m)"
+          value={maxDistance}
+          onChange={(e) => setMaxDistance(e.target.value)}
         />
       </div>
 
@@ -50,7 +58,7 @@ export default function Navbar() {
           <option value="glass">🧊 Glass</option>
         </select>
 
-        {/* Selector de usuario (ADMIN + reviewers) */}
+        {/* Selector de usuario */}
         <select
           value={selectedReviewerId}
           onChange={(e) => selectReviewer(e.target.value)}

@@ -3,6 +3,7 @@
 export const filtersInitialState = {
   type: "",
   maxPrice: "",
+  maxDistance: "",   // ← NUEVO
 };
 
 export function filtersReducer(state, action) {
@@ -12,6 +13,9 @@ export function filtersReducer(state, action) {
 
     case "SET_MAX_PRICE":
       return { ...state, maxPrice: action.payload };
+
+    case "SET_MAX_DISTANCE":   // ← NUEVO
+      return { ...state, maxDistance: action.payload };
 
     case "RESET":
       return filtersInitialState;

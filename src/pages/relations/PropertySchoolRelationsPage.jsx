@@ -2,16 +2,18 @@
 import { useEffect, useState } from "react";
 import { propertyService } from "../../services/propertyService";
 import { useFilters } from "../../hooks/useFilters";
+import PropertySchoolDistancesModal from "../../components/schools/PropertySchoolDistancesModal";
 
 export default function PropertySchoolRelationsPage() {
   const [properties, setProperties] = useState([]);
   const { type } = useFilters();
 
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
   useEffect(() => {
     propertyService.getAll().then(setProperties);
   }, []);
 
-  // Aplicar filtro por tipo
   const filtered = properties.filter(
     (p) => !type || p.property_type === type
   );
@@ -27,6 +29,7 @@ export default function PropertySchoolRelationsPage() {
             <th>Tipo</th>
             <th>Dirección</th>
             <th>Escuelas cercanas</th>
+            <th>Distancias</th>
           </tr>
         </thead>
 
@@ -41,10 +44,26 @@ export default function PropertySchoolRelationsPage() {
                   ? p.nearbySchools.map((s) => s.name).join(", ")
                   : "Sin escuelas"}
               </td>
+              <td>
+                {p.nearbySchools?.length > 0 ? (
+                  <button onClick={() => setSelectedProperty(p)}>
+                    Ver distancias
+                  </button>
+                ) : (
+                  "—"
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {selectedProperty && (
+        <PropertySchoolDistancesModal
+          property={selectedProperty}
+          onClose={() => setSelectedProperty(null)}
+        />
+      )}
     </div>
   );
 }

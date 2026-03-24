@@ -1,6 +1,7 @@
+// src/components/properties/PropertyTable.jsx
 import { useRole } from "../../hooks/useRole";
 
-export default function PropertyTable({ properties, onEdit, onShowReviews }) {
+export default function PropertyTable({ properties, onEdit, onShowReviews, onShowSchools }) {
   const { role } = useRole();
 
   return (
@@ -12,6 +13,7 @@ export default function PropertyTable({ properties, onEdit, onShowReviews }) {
           <th>Dirección</th>
           <th>Owner</th>
           <th>Precio</th>
+          <th>Escuelas</th> {/* ← NUEVA COLUMNA */}
           <th>Acciones</th>
         </tr>
       </thead>
@@ -24,6 +26,17 @@ export default function PropertyTable({ properties, onEdit, onShowReviews }) {
             <td>{p.address}</td>
             <td>{p.owner?.fullName ?? "Sin owner"}</td>
             <td>{p.price ? `${p.price} €` : "—"}</td>
+
+            {/* 🔵 BOTÓN DE ESCUELAS */}
+            <td>
+              {p.nearbySchools?.length > 0 ? (
+                <button onClick={() => onShowSchools(p)}>
+                  Ver escuelas ({p.nearbySchools.length})
+                </button>
+              ) : (
+                "0"
+              )}
+            </td>
 
             <td className="actions">
               <button onClick={() => onShowReviews(p)}>Reviews</button>

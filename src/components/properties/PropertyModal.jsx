@@ -8,6 +8,7 @@ import HouseForm from "./forms/HouseForm";
 import DuplexForm from "./forms/DuplexForm";
 import TownHouseForm from "./forms/TownHouseForm";
 
+
 export default function PropertyModal({ property, onClose }) {
   const { addProperty, updateProperty } = useProperties();
 
