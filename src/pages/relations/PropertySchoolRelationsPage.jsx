@@ -1,6 +1,7 @@
 // src/pages/relations/PropertySchoolRelationsPage.jsx
 import { useEffect, useState } from "react";
-import { propertyService } from "../../services/propertyService";
+import { getAllProperties } from "../../services/propertyService";
+
 import { useFilters } from "../../hooks/useFilters";
 import PropertySchoolDistancesModal from "../../components/schools/PropertySchoolDistancesModal";
 
@@ -11,7 +12,7 @@ export default function PropertySchoolRelationsPage() {
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   useEffect(() => {
-    propertyService.getAll().then(setProperties);
+    getAllProperties().then(setProperties);
   }, []);
 
   const filtered = properties.filter(

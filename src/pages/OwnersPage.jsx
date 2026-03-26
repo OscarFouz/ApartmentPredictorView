@@ -1,54 +1,113 @@
 // src/pages/OwnersPage.jsx
+
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import OwnerTable from "../components/owners/OwnerTable";
 import OwnerModal from "../components/owners/OwnerModal";
-import { useOwners } from "../hooks/useOwners";
+
+import {
+  getAllOwners,
+  createOwner,
+  updateOwner,
+  deleteOwner
+} from "../services/ownerService";
 
 export default function OwnersPage() {
-  const { owners, load, edit, remove, create } = useOwners();
+  const location = useLocation();
+
+  const [owners, setOwners] = useState([]);
   const [selectedOwner, setSelectedOwner] = useState(null);
-  const [creating, setCreating] = useState(false);
+  const [modalMode, setModalMode] = useState("view"); // view | edit | create
+  const [showModal, setShowModal] = useState(false);
+
+  // ============================
+  // CARGAR PROPIETARIOS
+  // ============================
+  const loadOwners = async () => {
+    const data = await getAllOwners();
+    setOwners(data);
+  };
 
   useEffect(() => {
-    load();
+    loadOwners();
   }, []);
 
+  // ============================
+  // DETECTAR ?create=true
+  // ============================
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const createFlag = params.get("create");
+
+    if (createFlag) {
+      setSelectedOwner({
+        name: "",
+        email: "",
+        phone: "",
+        address: ""
+      });
+
+      setModalMode("create");
+      setShowModal(true);
+    }
+  }, [location.search]);
+
+  // ============================
+  // ACCIONES
+  // ============================
+  const handleView = (owner) => {
+    setSelectedOwner(owner);
+    setModalMode("view");
+    setShowModal(true);
+  };
+
+  const handleEdit = (owner) => {
+    setSelectedOwner(owner);
+    setModalMode("edit");
+    setShowModal(true);
+  };
+
+  const handleDelete = async (owner) => {
+    if (!window.confirm("¿Eliminar este propietario?")) return;
+    await deleteOwner(owner.id);
+    loadOwners();
+  };
+
+  const handleSave = async (form) => {
+    if (modalMode === "create") {
+      await createOwner(form);
+    } else {
+      await updateOwner(form.id, form);
+    }
+
+    loadOwners();
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setSelectedOwner(null);
+  };
+
   return (
-    <div>
-      <h2>Owners</h2>
+    <div className="page-content">
+      <h1>Propietarios</h1>
 
-      <button onClick={() => setCreating(true)}>Nuevo Owner</button>
-
+      {/* TABLA */}
       <OwnerTable
         owners={owners}
-        onEdit={setSelectedOwner}
-        onDelete={remove}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
 
-      {selectedOwner && (
+      {/* MODAL */}
+      {showModal && (
         <OwnerModal
           owner={selectedOwner}
-          onSave={(data) => {
-            edit(selectedOwner.id, data);
-            setSelectedOwner(null);
-          }}
-          onClose={() => setSelectedOwner(null)}
-        />
-      )}
-
-      {creating && (
-        <OwnerModal
-          owner={{
-            fullName: "",
-            email: "",
-            phone: "",
-            business: false,
-          }}
-          onSave={(data) => {
-            create(data);
-            setCreating(false);
-          }}
-          onClose={() => setCreating(false)}
+          mode={modalMode}
+          onSave={handleSave}
+          onClose={handleClose}
         />
       )}
     </div>

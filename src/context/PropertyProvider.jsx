@@ -2,32 +2,37 @@
 import { useReducer, useEffect } from "react";
 import { PropertyContext } from "./PropertyContext";
 import { propertyReducer } from "./reducers/propertyReducer";
-import { propertyService } from "../services/propertyService";
+
+import {
+  getAllProperties,
+  createProperty,
+  updateProperty,
+  deleteProperty
+} from "../services/propertyService";
 
 export function PropertyProvider({ children }) {
   const [state, dispatch] = useReducer(propertyReducer, {
     properties: [],
   });
 
-  // 🔹 Cargar todas las propiedades desde 4 endpoints
   useEffect(() => {
-    propertyService.getAll().then(data =>
+    getAllProperties().then(data =>
       dispatch({ type: "LOAD", payload: data })
     );
   }, []);
 
-  const addProperty = (type, data) =>
-    propertyService.create(type, data).then(res =>
+  const addProperty = (data) =>
+    createProperty(data).then(res =>
       dispatch({ type: "ADD", payload: res })
     );
 
-  const updateProperty = (type, id, data) =>
-    propertyService.update(type, id, data).then(res =>
+  const updatePropertyFn = (id, data) =>
+    updateProperty(id, data).then(res =>
       dispatch({ type: "UPDATE", payload: res })
     );
 
-  const deleteProperty = (type, id) =>
-    propertyService.delete(type, id).then(() =>
+  const deletePropertyFn = (id) =>
+    deleteProperty(id).then(() =>
       dispatch({ type: "DELETE", payload: id })
     );
 
@@ -36,8 +41,8 @@ export function PropertyProvider({ children }) {
       value={{
         properties: state.properties,
         addProperty,
-        updateProperty,
-        deleteProperty,
+        updateProperty: updatePropertyFn,
+        deleteProperty: deletePropertyFn,
       }}
     >
       {children}

@@ -1,77 +1,30 @@
-// src/layout/Navbar.jsx
-import { useFilters } from "../hooks/useFilters";
-import { useTheme } from "../hooks/useTheme";
-import { useRole } from "../hooks/useRole";
+// src/components/layout/Navbar.jsx
+
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const { type, setType, maxPrice, setMaxPrice, maxDistance, setMaxDistance } = useFilters();
-  const { theme, setTheme } = useTheme();
-  const { role, reviewers, selectedReviewerId, selectReviewer } = useRole();
+  const navigate = useNavigate();
 
   return (
     <nav className="navbar">
-      <h1 className="navbar-title">Apartment Predictor</h1>
+      {/* TÍTULO */}
+      <div className="navbar-title">Panel de Gestión</div>
 
+      {/* FILTROS (si los tienes) */}
       <div className="filters">
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="">Todos</option>
-          <option value="APARTMENT">Apartment</option>
-          <option value="HOUSE">House</option>
-          <option value="DUPLEX">Duplex</option>
-          <option value="TOWNHOUSE">TownHouse</option>
-        </select>
-
-        <input
-          type="number"
-          placeholder="Precio máximo"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-
-        {/* 🔵 NUEVO FILTRO DE DISTANCIA */}
-        <input
-          type="number"
-          placeholder="Distancia máx (m)"
-          value={maxDistance}
-          onChange={(e) => setMaxDistance(e.target.value)}
-        />
+        {/* Aquí puedes dejar tus filtros actuales */}
       </div>
 
+      {/* BOTONES DERECHA */}
       <div className="right-side">
-        {/* Selector de tema */}
-        <select
-          value={theme}
-          onChange={(e) => setTheme(e.target.value)}
-          style={{
-            padding: "8px",
-            borderRadius: "6px",
-            background: "#222",
-            color: "white",
-            border: "1px solid #555",
-            marginRight: "10px",
-          }}
-        >
-          <option value="dark">🌑 Oscuro</option>
-          <option value="light">🌕 Claro</option>
-          <option value="blue">🔵 Azul</option>
-          <option value="green">🟢 Verde</option>
-          <option value="glass">🧊 Glass</option>
-        </select>
+        <button onClick={() => navigate("/properties?create=APARTMENT")}>
+          + Apartment
+        </button>
 
-        {/* Selector de usuario */}
-        <select
-          value={selectedReviewerId}
-          onChange={(e) => selectReviewer(e.target.value)}
-        >
-          {Array.isArray(reviewers) &&
-            reviewers.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.fullName}
-              </option>
-            ))}
-        </select>
-
-        <span>Rol: {role}</span>
+        <button onClick={() => navigate("/schools?create=true")}>
+          + School
+        </button>
       </div>
     </nav>
   );

@@ -456,3 +456,44 @@ body.glass-theme .sidebar a.active {
   gap: 15px;
   white-space: nowrap;
 }
+
+/* ============================
+   FORMULARIO BASE (GRID 2 COLUMNAS)
+============================ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.form-buttons {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* ============================
+   TABLAS — ENCABEZADO FIJO
+============================ */
+.table-container {
+  max-height: 70vh; /* Ajusta si quieres más o menos scroll */
+  overflow-y: auto;
+}
+
+.property-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}

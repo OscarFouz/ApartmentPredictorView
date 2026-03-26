@@ -1,39 +1,66 @@
 // src/services/schoolService.js
 
-const API = "http://localhost:8080/api/schools";
+const API_URL = "http://localhost:8000/schools"; 
+// Ajusta la URL según tu backend
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+// ============================
+// OBTENER TODAS LAS ESCUELAS
+// ============================
+export async function getAllSchools() {
+  const res = await fetch(API_URL);
 
-  if (!res.ok) throw new Error(`Error en ${url}`);
-  return res.json();
+  if (!res.ok) {
+    throw new Error("Error al obtener las escuelas");
+  }
+
+  return await res.json();
 }
 
-export const schoolService = {
-  getAll() {
-    return fetchJson(API);
-  },
+// ============================
+// CREAR ESCUELA
+// ============================
+export async function createSchool(data) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-  create(data) {
-    return fetchJson(API, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
+  if (!res.ok) {
+    throw new Error("Error al crear la escuela");
+  }
 
-  update(id, data) {
-    return fetchJson(`${API}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
+  return await res.json();
+}
 
-  delete(id) {
-    return fetchJson(`${API}/${id}`, {
-      method: "DELETE",
-    });
-  },
-};
+// ============================
+// ACTUALIZAR ESCUELA
+// ============================
+export async function updateSchool(id, data) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al actualizar la escuela");
+  }
+
+  return await res.json();
+}
+
+// ============================
+// ELIMINAR ESCUELA
+// ============================
+export async function deleteSchool(id) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar la escuela");
+  }
+
+  return true;
+}

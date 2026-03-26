@@ -1,29 +1,32 @@
-// src/components/owners/OwnerModal.jsx
+// src/components/schools/SchoolModal.jsx
 
 import React, { useEffect, useState } from "react";
-import OwnerForm from "./OwnerForm";
+import SchoolForm from "./SchoolForm";
+import Map from "../map/Map";
 
-export default function OwnerModal({
-  owner,
+export default function SchoolModal({
+  school,
   onClose,
   onSave,
   mode: initialMode = "view" // view | edit | create
 }) {
-  const isEditing = Boolean(owner);
+  const isEditing = Boolean(school);
   const [mode, setMode] = useState(initialMode);
 
   const emptyForm = {
     name: "",
-    email: "",
-    phone: "",
-    address: ""
+    address: "",
+    rating: "",
+    description: "",
+    latitude: "",
+    longitude: ""
   };
 
-  const [form, setForm] = useState(owner || emptyForm);
+  const [form, setForm] = useState(school || emptyForm);
 
   useEffect(() => {
-    setForm(owner || emptyForm);
-  }, [owner]);
+    setForm(school || emptyForm);
+  }, [school]);
 
   const handleChange = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -41,18 +44,28 @@ export default function OwnerModal({
         {/* TÍTULO */}
         <h2 style={{ marginBottom: "15px" }}>
           {mode === "create"
-            ? "Crear Propietario"
+            ? "Crear Escuela"
             : mode === "edit"
-            ? "Editar Propietario"
-            : "Ver Propietario"}
+            ? "Editar Escuela"
+            : "Ver Escuela"}
         </h2>
 
         {/* FORMULARIO */}
-        <OwnerForm
+        <SchoolForm
           form={form}
           disabled={mode === "view"}
           onChange={handleChange}
         />
+
+        {/* MAPA SOLO EN MODO VER */}
+        {mode === "view" && school && (
+          <div style={{ marginTop: "20px" }}>
+            <Map
+              property={school}
+              schools={[]} 
+            />
+          </div>
+        )}
 
         {/* BOTONES */}
         <div className="form-buttons">

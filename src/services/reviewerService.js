@@ -1,39 +1,66 @@
 // src/services/reviewerService.js
 
-const API = "http://localhost:8080/api/reviewers";
+const API_URL = "http://localhost:8000/reviewers";
+// Ajusta esta URL según tu backend
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+// ============================
+// OBTENER TODOS LOS REVIEWERS
+// ============================
+export async function getAllReviewers() {
+  const res = await fetch(API_URL);
 
-  if (!res.ok) throw new Error(`Error en ${url}`);
-  return res.json();
+  if (!res.ok) {
+    throw new Error("Error al obtener los reviewers");
+  }
+
+  return await res.json();
 }
 
-export const reviewerService = {
-  getAll() {
-    return fetchJson(API);
-  },
+// ============================
+// CREAR REVIEWER
+// ============================
+export async function createReviewer(data) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-  create(data) {
-    return fetchJson(API, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
+  if (!res.ok) {
+    throw new Error("Error al crear el reviewer");
+  }
 
-  update(id, data) {
-    return fetchJson(`${API}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
+  return await res.json();
+}
 
-  delete(id) {
-    return fetchJson(`${API}/${id}`, {
-      method: "DELETE",
-    });
-  },
-};
+// ============================
+// ACTUALIZAR REVIEWER
+// ============================
+export async function updateReviewer(id, data) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al actualizar el reviewer");
+  }
+
+  return await res.json();
+}
+
+// ============================
+// ELIMINAR REVIEWER
+// ============================
+export async function deleteReviewer(id) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar el reviewer");
+  }
+
+  return true;
+}

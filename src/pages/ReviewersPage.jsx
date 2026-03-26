@@ -1,55 +1,113 @@
 // src/pages/ReviewersPage.jsx
+
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import ReviewerTable from "../components/reviewers/ReviewerTable";
 import ReviewerModal from "../components/reviewers/ReviewerModal";
-import { useReviewers } from "../hooks/useReviewers";
+
+import {
+  getAllReviewers,
+  createReviewer,
+  updateReviewer,
+  deleteReviewer
+} from "../services/reviewerService";
 
 export default function ReviewersPage() {
-  const { reviewers, load, edit, remove, create } = useReviewers();
+  const location = useLocation();
+
+  const [reviewers, setReviewers] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
-  const [creating, setCreating] = useState(false);
+  const [modalMode, setModalMode] = useState("view"); // view | edit | create
+  const [showModal, setShowModal] = useState(false);
+
+  // ============================
+  // CARGAR REVIEWERS
+  // ============================
+  const loadReviewers = async () => {
+    const data = await getAllReviewers();
+    setReviewers(data);
+  };
 
   useEffect(() => {
-    load();
+    loadReviewers();
   }, []);
 
+  // ============================
+  // DETECTAR ?create=true
+  // ============================
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const createFlag = params.get("create");
+
+    if (createFlag) {
+      setSelectedReviewer({
+        name: "",
+        email: "",
+        phone: "",
+        expertise: ""
+      });
+
+      setModalMode("create");
+      setShowModal(true);
+    }
+  }, [location.search]);
+
+  // ============================
+  // ACCIONES
+  // ============================
+  const handleView = (reviewer) => {
+    setSelectedReviewer(reviewer);
+    setModalMode("view");
+    setShowModal(true);
+  };
+
+  const handleEdit = (reviewer) => {
+    setSelectedReviewer(reviewer);
+    setModalMode("edit");
+    setShowModal(true);
+  };
+
+  const handleDelete = async (reviewer) => {
+    if (!window.confirm("¿Eliminar este reviewer?")) return;
+    await deleteReviewer(reviewer.id);
+    loadReviewers();
+  };
+
+  const handleSave = async (form) => {
+    if (modalMode === "create") {
+      await createReviewer(form);
+    } else {
+      await updateReviewer(form.id, form);
+    }
+
+    loadReviewers();
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setSelectedReviewer(null);
+  };
+
   return (
-    <div>
-      <h2>Reviewers</h2>
+    <div className="page-content">
+      <h1>Reviewers</h1>
 
-      <button onClick={() => setCreating(true)}>Nuevo Reviewer</button>
-
+      {/* TABLA */}
       <ReviewerTable
         reviewers={reviewers}
-        onEdit={setSelectedReviewer}
-        onDelete={remove}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
 
-      {selectedReviewer && (
+      {/* MODAL */}
+      {showModal && (
         <ReviewerModal
           reviewer={selectedReviewer}
-          onSave={(data) => {
-            edit(selectedReviewer.id, data);
-            setSelectedReviewer(null);
-          }}
-          onClose={() => setSelectedReviewer(null)}
-        />
-      )}
-
-      {creating && (
-        <ReviewerModal
-          reviewer={{
-            fullName: "",
-            email: "",
-            phone: "",
-            reputation: "",
-            business: false,
-          }}
-          onSave={(data) => {
-            create(data);
-            setCreating(false);
-          }}
-          onClose={() => setCreating(false)}
+          mode={modalMode}
+          onSave={handleSave}
+          onClose={handleClose}
         />
       )}
     </div>

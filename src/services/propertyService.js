@@ -1,55 +1,66 @@
 // src/services/propertyService.js
 
-const API = "http://localhost:8080/api";
+const API_URL = "http://localhost:8000/properties";
+// Ajusta esta URL según tu backend
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+// ============================
+// OBTENER TODAS LAS PROPIEDADES
+// ============================
+export async function getAllProperties() {
+  const res = await fetch(API_URL);
 
-  if (!res.ok) throw new Error(`Error en ${url}`);
-  return res.json();
+  if (!res.ok) {
+    throw new Error("Error al obtener las propiedades");
+  }
+
+  return await res.json();
 }
 
-export const propertyService = {
-  // 🔹 Cargar TODAS las propiedades desde 4 endpoints
-  async getAll() {
-    const [apartments, houses, duplexes, townhouses] = await Promise.all([
-      fetchJson(`${API}/apartments`),
-      fetchJson(`${API}/houses`),
-      fetchJson(`${API}/duplexes`),
-      fetchJson(`${API}/townhouses`),
-    ]);
+// ============================
+// CREAR PROPIEDAD
+// ============================
+export async function createProperty(data) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-    return [
-      ...apartments.map(a => ({ ...a, property_type: "APARTMENT" })),
-      ...houses.map(h => ({ ...h, property_type: "HOUSE" })),
-      ...duplexes.map(d => ({ ...d, property_type: "DUPLEX" })),
-      ...townhouses.map(t => ({ ...t, property_type: "TOWNHOUSE" })),
-    ];
-  },
+  if (!res.ok) {
+    throw new Error("Error al crear la propiedad");
+  }
 
-  // 🔹 Crear propiedad según tipo
-  create(type, data) {
-    return fetchJson(`${API}/${type.toLowerCase()}s`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
+  return await res.json();
+}
 
-  // 🔹 Actualizar propiedad según tipo
-  update(type, id, data) {
-    return fetchJson(`${API}/${type.toLowerCase()}s/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
+// ============================
+// ACTUALIZAR PROPIEDAD
+// ============================
+export async function updateProperty(id, data) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-  // 🔹 Eliminar propiedad según tipo
-  delete(type, id) {
-    return fetchJson(`${API}/${type.toLowerCase()}s/${id}`, {
-      method: "DELETE",
-    });
-  },
-};
+  if (!res.ok) {
+    throw new Error("Error al actualizar la propiedad");
+  }
+
+  return await res.json();
+}
+
+// ============================
+// ELIMINAR PROPIEDAD
+// ============================
+export async function deleteProperty(id) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar la propiedad");
+  }
+
+  return true;
+}

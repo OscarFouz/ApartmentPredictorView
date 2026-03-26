@@ -1,58 +1,64 @@
 // src/components/properties/PropertyTable.jsx
-import { useRole } from "../../hooks/useRole";
 
-export default function PropertyTable({ properties, onEdit, onShowReviews, onShowSchools }) {
-  const { role } = useRole();
+import React from "react";
 
+export default function PropertyTable({
+  properties,
+  onView,
+  onEdit,
+  onDelete,
+  onShowReviews,
+  onShowSchools
+}) {
   return (
-    <table className="property-table">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Nombre</th>
-          <th>Dirección</th>
-          <th>Owner</th>
-          <th>Precio</th>
-          <th>Escuelas</th> {/* ← NUEVA COLUMNA */}
-          <th>Acciones</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {properties.map((p) => (
-          <tr key={p.id}>
-            <td>{p.property_type}</td>
-            <td>{p.name}</td>
-            <td>{p.address}</td>
-            <td>{p.owner?.fullName ?? "Sin owner"}</td>
-            <td>{p.price ? `${p.price} €` : "—"}</td>
-
-            {/* 🔵 BOTÓN DE ESCUELAS */}
-            <td>
-              {p.nearbySchools?.length > 0 ? (
-                <button onClick={() => onShowSchools(p)}>
-                  Ver escuelas ({p.nearbySchools.length})
-                </button>
-              ) : (
-                "0"
-              )}
-            </td>
-
-            <td className="actions">
-              <button onClick={() => onShowReviews(p)}>Reviews</button>
-
-              {role === "USER" && <button>Crear review</button>}
-
-              {role === "ADMIN" && (
-                <>
-                  <button onClick={() => onEdit(p)}>Editar</button>
-                  <button className="danger">Eliminar</button>
-                </>
-              )}
-            </td>
+    <div className="table-container">
+      <table className="property-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Área</th>
+            <th>Dormitorios</th>
+            <th>Baños</th>
+            <th>Acciones</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {properties.map((p) => (
+            <tr key={p.id}>
+              <td>{p.name}</td>
+              <td>{p.address}</td>
+              <td>{p.property_type}</td>
+              <td>{p.price} €</td>
+              <td>{p.area} m²</td>
+              <td>{p.bedrooms}</td>
+              <td>{p.bathrooms}</td>
+
+              <td style={{ whiteSpace: "nowrap" }}>
+                <button onClick={() => onView(p)}>Ver</button>
+                <button onClick={() => onEdit(p)}>Editar</button>
+
+                {onShowReviews && (
+                  <button onClick={() => onShowReviews(p)}>Reviews</button>
+                )}
+
+                {onShowSchools && (
+                  <button onClick={() => onShowSchools(p)}>Escuelas</button>
+                )}
+
+                {onDelete && (
+                  <button className="danger" onClick={() => onDelete(p)}>
+                    Eliminar
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

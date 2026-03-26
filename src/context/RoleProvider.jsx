@@ -1,7 +1,8 @@
 // src/context/RoleProvider.jsx
 import { useState, useEffect } from "react";
 import { RoleContext } from "./RoleContext";
-import { reviewerService } from "../services/reviewerService";
+
+import { getAllReviewers } from "../services/reviewerService";
 
 export function RoleProvider({ children }) {
   const [role, setRole] = useState(localStorage.getItem("role") || "USER");
@@ -9,15 +10,13 @@ export function RoleProvider({ children }) {
   const [reviewers, setReviewers] = useState([]);
 
   const [selectedReviewerId, setSelectedReviewerId] = useState(
-    localStorage.getItem("reviewerId") || "ADMIN" // por defecto admin
+    localStorage.getItem("reviewerId") || "ADMIN"
   );
 
   useEffect(() => {
-    reviewerService.getAll().then((res) => {
-      // res es un array, no res.data
+    getAllReviewers().then((res) => {
       const reviewersFromApi = res;
 
-      // Añadimos el usuario ADMIN como opción especial
       const adminUser = {
         id: "ADMIN",
         fullName: "Administrador",
@@ -31,7 +30,6 @@ export function RoleProvider({ children }) {
     setSelectedReviewerId(id);
     localStorage.setItem("reviewerId", id);
 
-    // Si selecciona ADMIN → rol ADMIN
     if (id === "ADMIN") {
       setRole("ADMIN");
       localStorage.setItem("role", "ADMIN");

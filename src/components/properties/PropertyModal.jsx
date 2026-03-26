@@ -1,123 +1,143 @@
-// src/components/properties/PropertyModal.jsx
-import { useState, useEffect } from "react";
-import { useProperties } from "../../hooks/useProperties";
+// src/components/properties/modals/PropertyModal.jsx
 
-// Formularios específicos
+import React, { useEffect, useState } from "react";
+
 import ApartmentForm from "./forms/ApartmentForm";
 import HouseForm from "./forms/HouseForm";
 import DuplexForm from "./forms/DuplexForm";
 import TownHouseForm from "./forms/TownHouseForm";
 
+import Map from "../map/Map";
 
-export default function PropertyModal({ property, onClose }) {
-  const { addProperty, updateProperty } = useProperties();
-
+export default function PropertyModal({
+  property,
+  onClose,
+  onSave,
+  mode: initialMode = "view" // "view" | "edit" | "create"
+}) {
   const isEditing = Boolean(property);
 
-  const [form, setForm] = useState({
+  const [mode, setMode] = useState(initialMode);
+
+  const emptyForm = {
     name: "",
     address: "",
     price: "",
-    property_type: "APARTMENT",
-  });
+    area: "",
+    bedrooms: "",
+    bathrooms: "",
+    description: "",
+    property_type: property?.property_type || "APARTMENT",
+    hasElevator: false,
+    hasGarage: false,
+    hasGarden: false,
+    hasPatio: false,
+    hasTerrace: false,
+    sharedWalls: 0
+  };
+
+  const [form, setForm] = useState(property || emptyForm);
 
   useEffect(() => {
-    if (property) {
-      setForm({
-        name: property.name,
-        address: property.address,
-        price: property.price,
-        property_type: property.property_type,
-        area: property.area ?? "",
-        bedrooms: property.bedrooms ?? "",
-        bathrooms: property.bathrooms ?? "",
-        floors: property.floors ?? "",
-        gardenArea: property.gardenArea ?? "",
-        levels: property.levels ?? "",
-        sharedWalls: property.sharedWalls ?? "",
-      });
-    }
+    setForm(property || emptyForm);
   }, [property]);
 
-  const handleSubmit = async (updatedData) => {
-    const type = updatedData.property_type || form.property_type;
+  const handleChange = (name, value) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-    if (isEditing) {
-      await updateProperty(type, property.id, updatedData);
-    } else {
-      await addProperty(type, updatedData);
-    }
-
+  const handleSubmit = () => {
+    onSave(form);
     onClose();
   };
 
   const renderForm = () => {
-    const type = form.property_type;
-
-    switch (type) {
+    switch (form.property_type) {
       case "APARTMENT":
         return (
           <ApartmentForm
-            initialData={form}
-            onSubmit={handleSubmit}
+            form={form}
+            disabled={mode === "view"}
+            onChange={handleChange}
           />
         );
 
       case "HOUSE":
         return (
           <HouseForm
-            initialData={form}
-            onSubmit={handleSubmit}
+            form={form}
+            disabled={mode === "view"}
+            onChange={handleChange}
           />
         );
 
       case "DUPLEX":
         return (
           <DuplexForm
-            initialData={form}
-            onSubmit={handleSubmit}
+            form={form}
+            disabled={mode === "view"}
+            onChange={handleChange}
           />
         );
 
       case "TOWNHOUSE":
         return (
           <TownHouseForm
-            initialData={form}
-            onSubmit={handleSubmit}
+            form={form}
+            disabled={mode === "view"}
+            onChange={handleChange}
           />
         );
 
       default:
-        return <p>Error: tipo desconocido</p>;
+        return <p>Tipo de propiedad no soportado.</p>;
     }
   };
 
   return (
-    <div className="modal">
+    <div className="modal-overlay">
       <div className="modal-content">
 
-        <h3>{isEditing ? "Editar Propiedad" : "Nueva Propiedad"}</h3>
+        {/* TÍTULO */}
+        <h2 style={{ marginBottom: "15px" }}>
+          {mode === "create"
+            ? "Crear Propiedad"
+            : mode === "edit"
+            ? "Editar Propiedad"
+            : "Ver Propiedad"}
+        </h2>
 
-        {/* Selector de tipo solo cuando se crea */}
-        {!isEditing && (
-          <select
-            value={form.property_type}
-            onChange={(e) =>
-              setForm({ ...form, property_type: e.target.value })
-            }
-          >
-            <option value="APARTMENT">Apartment</option>
-            <option value="HOUSE">House</option>
-            <option value="DUPLEX">Duplex</option>
-            <option value="TOWNHOUSE">TownHouse</option>
-          </select>
-        )}
-
+        {/* FORMULARIO */}
         {renderForm()}
 
-        <button className="danger" onClick={onClose}>
-          Cancelar
-        </button>
+        {/* MAPA SOLO EN MODO VER */}
+        {mode === "view" && property && (
+          <div style={{ marginTop: "20px" }}>
+            <Map
+              property={property}
+              schools={property.nearbySchools || []}
+            />
+          </div>
+        )}
+
+        {/* BOTONES */}
+        <div className="form-buttons">
+
+          {/* Cambiar entre ver y editar */}
+          {isEditing && mode === "view" && (
+            <button onClick={() => setMode("edit")}>Editar</button>
+          )}
+
+          {/* Guardar */}
+          {mode !== "view" && (
+            <button onClick={handleSubmit}>Guardar</button>
+          )}
+
+          {/* Cerrar */}
+          <button className="danger" onClick={onClose}>
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   );

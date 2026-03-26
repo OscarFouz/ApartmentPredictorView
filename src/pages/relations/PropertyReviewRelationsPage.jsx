@@ -1,6 +1,6 @@
 // src/pages/relations/PropertyReviewRelationsPage.jsx
 import { useEffect, useState } from "react";
-import { propertyService } from "../../services/propertyService";
+import { getAllProperties } from "../../services/propertyService";
 import { useFilters } from "../../hooks/useFilters";
 
 export default function PropertyReviewRelationsPage() {
@@ -8,10 +8,9 @@ export default function PropertyReviewRelationsPage() {
   const { type } = useFilters();
 
   useEffect(() => {
-    propertyService.getAll().then(setProperties);
+    getAllProperties().then(setProperties);
   }, []);
 
-  // Aplicar filtro por tipo
   const filtered = properties.filter(
     (p) => !type || p.property_type === type
   );

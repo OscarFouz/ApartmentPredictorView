@@ -1,53 +1,37 @@
-// src/components/properties/forms/TownHouseForm.jsx
-import React, { useState } from "react";
+import PropertyFormBase from "./PropertyFormBase";
 
-export default function TownHouseForm({ initialData, onSubmit }) {
-  const [form, setForm] = useState(initialData);
+export default function TownHouseForm({ form, disabled, onChange }) {
+  const fields = [
+    { name: "name", label: "Nombre", type: "text" },
+    { name: "address", label: "Dirección", type: "text" },
+    { name: "price", label: "Precio (€)", type: "number" },
+    { name: "area", label: "Área (m²)", type: "number" },
+    { name: "bedrooms", label: "Dormitorios", type: "number" },
+    { name: "bathrooms", label: "Baños", type: "number" },
 
-  const handle = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    {
+      name: "sharedWalls",
+      label: "Paredes compartidas",
+      type: "number"
+    },
+    {
+      name: "hasPatio",
+      label: "Patio",
+      type: "checkbox"
+    },
+    {
+      name: "description",
+      label: "Descripción",
+      type: "textarea"
+    }
+  ];
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit(form);
-      }}
-    >
-      <h2>Editar TownHouse</h2>
-
-      <input
-        name="name"
-        value={form.name}
-        onChange={handle}
-        placeholder="Nombre"
-      />
-
-      <input
-        name="address"
-        value={form.address}
-        onChange={handle}
-        placeholder="Dirección"
-      />
-
-      <input
-        name="price"
-        type="number"
-        value={form.price}
-        onChange={handle}
-        placeholder="Precio"
-      />
-
-      <input
-        name="sharedWalls"
-        type="number"
-        value={form.sharedWalls}
-        onChange={handle}
-        placeholder="Paredes compartidas"
-      />
-
-      <button type="submit">Guardar</button>
-    </form>
+    <PropertyFormBase
+      fields={fields}
+      form={form}
+      disabled={disabled}
+      onChange={onChange}
+    />
   );
 }
