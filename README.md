@@ -1,252 +1,117 @@
-# ApartmentPredictor — Frontend (React + Vite)
+# ApartmentPredictorView
 
-Este frontend implementa una interfaz completa para gestionar apartamentos y sus reviews, conectándose al backend Spring Boot mediante llamadas REST.
+**ApartmentPredictorView** es un frontend construido con React y Vite para gestionar propiedades, propietarios, reviews, escuelas, contratos y relaciones entre entidades.
 
-Incluye:
+## Características principales
 
-- Tabla interactiva de apartamentos
-- Modal para ver, editar y crear apartamentos
-- Gestión completa de reviews (listar y añadir)
-- Hooks personalizados para separar lógica de UI
-- Servicios API basados en Axios
-- Estilos centralizados en `Table.css` y `index.css`
-- Renderizado de imágenes dinámicas con Picsum
-- Arquitectura limpia, modular y escalable
+- Gestión CRUD para propiedades, propietarios, reviewers, schools y contratos
+- Navegación con React Router
+- Providers globales con estado centralizado para roles, temas, filtros y propiedades
+- Lazy loading de rutas para mejorar el rendimiento
+- Manejo de errores con toast visuales
+- Tests con Vitest y React Testing Library
+- Formateo con Prettier y linting con ESLint
 
----
+## Tecnología
 
-# Arquitectura del Proyecto
+- React 19
+- Vite
+- Axios
+- React Router DOM
+- Vitest + Testing Library
+- ESLint + Prettier
 
-```
+## Estructura del proyecto
+
+```text
 src/
-│
+├── assets/
 ├── components/
-│   ├── ApartmentTable/
-│   │   ├── ApartmentTable.jsx
-│   │   ├── ApartmentRow.jsx
-│   │   ├── ApartmentModal.jsx
-│   │   ├── ApartmentForm.jsx
-│   │   └── index.js
-│   │
-│   ├── Reviews/
-│   │   ├── ReviewModal.jsx
-│   │   └── ReviewFormModal.jsx
-│   │
-│   ├── ManagerTable.jsx
-│   └── ApartmentManager.jsx
-│
+│   ├── layout/
+│   │   ├── Layout.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── SidebarMenu.jsx
+│   │   └── TopFilterBAr.jsx
+│   ├── map/Map.jsx
+│   ├── owners/
+│   ├── properties/
+│   ├── reviewers/
+│   ├── reviews/
+│   └── schools/
+├── context/
+│   ├── reducers/
+│   ├── AppProviders.jsx
+│   ├── FeedbackProvider.jsx
+│   ├── FiltersProvider.jsx
+│   ├── PropertyProvider.jsx
+│   ├── RoleProvider.jsx
+│   └── ThemeProvider.jsx
 ├── hooks/
-│   ├── useApartments.js
-│   └── useReviews.js
-│
-├── services/
-│   └── apartmentService.js
-│
-├── styles/
-│   └── Table.css
-│
-├── App.jsx
-├── main.jsx
-└── index.css
+├── layout/
+├── pages/
+└── services/
 ```
 
----
+## Scripts disponibles
 
-# Componentes Principales
-
-## **1. ApartmentTable.jsx**
-Es el componente principal de la UI.
-
-Responsabilidades:
-
-- Cargar apartamentos desde el backend (`useApartments`)
-- Mostrar la tabla completa
-- Abrir modales:
-  - Modal de detalles/edición/creación (`ApartmentModal`)
-  - Modal de reviews (`ReviewModal`)
-  - Modal para añadir review (`ReviewFormModal`)
-- Gestionar acciones CRUD
-
-Incluye el botón:
-
-```
-Nuevo Apartamento
-```
-
-que abre un modal vacío para crear un nuevo registro.
-
----
-
-## **2. ApartmentRow.jsx**
-Representa una fila de la tabla.
-
-Incluye:
-
-- Imagen dinámica:
-  ```
-  https://picsum.photos/seed/${ap.id}/80/80
-  ```
-- Datos del apartamento
-- Botones:
-  - Ver detalles
-  - Añadir review
-  - Ver reviews (solo si existen)
-  - Eliminar
-
----
-
-## **3. ApartmentModal.jsx**
-Modal reutilizable para:
-
-- Ver detalles
-- Editar apartamento
-- Crear apartamento nuevo
-
-Incluye:
-
-- Imagen grande
-- Formulario dinámico (`ApartmentForm`)
-- Botón de cerrar
-
-Evita cierre accidental:
-
-```jsx
-onClick={(e) => e.stopPropagation()}
-```
-
----
-
-## **4. ApartmentForm.jsx**
-Formulario dinámico basado en las claves del objeto recibido.
-
-Características:
-
-- Genera inputs automáticamente
-- Excluye `isNew`
-- Permite editar todos los campos
-- Usa clases CSS:
-  - `.modal-row`
-  - `.modal-content`
-  - `.modal-footer`
-
----
-
-# Gestión de Reviews
-
-## **5. ReviewModal.jsx**
-Muestra todas las reviews de un apartamento.
-
-Incluye:
-
-- Título
-- Contenido
-- Rating
-- Fecha (`reviewDate`)
-
----
-
-## **6. ReviewFormModal.jsx**
-Formulario para añadir una nueva review.
-
-Campos:
-
-- title
-- content
-- rating (1–5)
-
-Envía datos a:
-
-```
-POST /api/apartments/{id}/reviews
-```
-
----
-
-# Hooks Personalizados
-
-## **useApartments.js**
-Encapsula toda la lógica CRUD:
-
-- `getAll()`
-- `delete(id)`
-- `create(data)`
-- `update(id, data)`
-- `loadApartments()`
-
-Estados:
-
-- `apartments`
-- `isLoading`
-- `isAxiosError`
-
----
-
-## **useReviews.js**
-Gestiona reviews por apartamento:
-
-- `loadReviews(apartmentId)`
-- `addReview(apartmentId, review)`
-
----
-
-# Servicios API
-
-## **apartmentService.js**
-Usa Axios con baseURL:
-
-```
-http://localhost:8080/api
-```
-
-Métodos:
-
-- `getAll()`
-- `create(data)`
-- `update(id, data)`
-- `delete(id)`
-
-Incluye interceptor de errores.
-
----
-
-# Estilos — Table.css
-
-Define:
-
-- Tabla con header sticky
-- Scroll vertical automático
-- Modal centrado con overlay
-- Botones pastel (`details-btn`, `delete-btn`)
-- Inputs estilizados
-- Layout compacto y profesional
-
----
-
-# Conexión con Backend
-
-El backend debe permitir CORS:
-
-```java
-@CrossOrigin(origins = "http://localhost:5173")
-```
-
-El frontend consume:
-
-```
-http://localhost:8080/api
-```
-
----
-
-# Ejecución
-
-Instalar dependencias:
-
-```
+```bash
 npm install
+npm run dev
+npm run build
+npm run preview
+npm run lint
+npm run lint:fix
+npm run format
+npm run test
+npm run test:run
+npm run coverage
 ```
 
-Iniciar servidor:
+## Configuración de entorno
+
+Copia `.env.example` a `.env` y ajusta la URL del backend si es necesario.
+
+```bash
+# Unix / macOS
+cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
+
+# Windows CMD
+copy .env.example .env
+```
+
+Variable principal:
+
+- `VITE_API_BASE_URL` — baseURL de Axios para las peticiones al backend
+
+## Documentación interna
+
+La documentación del proyecto está ubicada en `src/docs/`:
+
+- `src/docs/ManualTecnico.md` — detalles técnicos y arquitectura
+- `src/docs/ManualUsuario.md` — guía de uso
+- `src/docs/glosario.md` — definiciones y conceptos clave
+- `src/docs/UML.md` — diagramas UML y relaciones
+
+También puedes revisar `src/docs/README.md` para un índice rápido.
+
+## Mejoras recientes
+
+- `AppProviders` consolida providers globales
+- Lazy loading de rutas con `React.lazy` + `Suspense`
+- Contextos memoizados con `useMemo` y `useCallback`
+- Feedback visual mediante toasts globales
+- `Vite` configurado para tests con `Vitest`
+
+## Cómo contribuir
+
+1. Crea una rama nueva para tu cambio.
+2. Ejecuta `npm run lint` y `npm run format`.
+3. Añade tests si modificas lógica compartida.
+4. Sube tu rama y crea un PR.
 
 ```
 npm run dev
@@ -268,4 +133,3 @@ http://localhost:5173
 - Modales estilizados y responsivos
 - Arquitectura modular y escalable
 - Código limpio y mantenible
-

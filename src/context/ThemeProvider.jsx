@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useCallback, useMemo } from "react";
 import { ThemeContext } from "./ThemeContext";
 import { themeReducer } from "./reducers/themeReducer";
 
@@ -19,13 +19,23 @@ export function ThemeProvider({ children }) {
     localStorage.setItem("theme", state.theme);
   }, [state.theme]);
 
-  const toggleTheme = () => dispatch({ type: "TOGGLE" });
+  const toggleTheme = useCallback(
+    () => dispatch({ type: "TOGGLE" }),
+    []
+  );
 
-  const setTheme = (theme) =>
-    dispatch({ type: "SET_THEME", payload: theme });
+  const setTheme = useCallback(
+    (theme) => dispatch({ type: "SET_THEME", payload: theme }),
+    []
+  );
+
+  const value = useMemo(
+    () => ({ theme: state.theme, toggleTheme, setTheme }),
+    [state.theme, toggleTheme, setTheme]
+  );
 
   return (
-    <ThemeContext.Provider value={{ theme: state.theme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

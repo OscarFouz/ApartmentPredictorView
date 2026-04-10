@@ -1,6 +1,7 @@
 // src/components/reviews/ReviewFormModal.jsx
 import { useState } from "react";
 import { reviewService } from "../../services/reviewService";
+import { useFeedback } from "../../hooks/useFeedback";
 
 export default function ReviewFormModal({ property, reviewerId, onClose }) {
   const [form, setForm] = useState({
@@ -10,12 +11,23 @@ export default function ReviewFormModal({ property, reviewerId, onClose }) {
     propertyId: property.id,
     reviewerId: reviewerId,
   });
+  const [saving, setSaving] = useState(false);
+  const { showError, showSuccess } = useFeedback();
 
   const handleChange = (key, value) =>
     setForm({ ...form, [key]: value });
 
-  const handleSave = () => {
-    reviewService.create(form).then(() => onClose());
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await reviewService.create(form);
+      showSuccess("Review creada correctamente");
+      onClose();
+    } catch (err) {
+      showError(err.message || "Error al crear la review");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -48,8 +60,12 @@ export default function ReviewFormModal({ property, reviewerId, onClose }) {
         </div>
 
         <div className="modal-footer">
-          <button onClick={handleSave}>Guardar</button>
-          <button className="danger" onClick={onClose}>Cancelar</button>
+          <button onClick={handleSave} disabled={saving}>
+            {saving ? "Guardando..." : "Guardar"}
+          </button>
+          <button className="danger" onClick={onClose}>
+            Cancelar
+          </button>
         </div>
       </div>
     </div>

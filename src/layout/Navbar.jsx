@@ -1,10 +1,18 @@
-// src/components/layout/Navbar.jsx
-
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar() {
+function Navbar() {
   const navigate = useNavigate();
+
+  const goToNewApartment = useCallback(
+    () => navigate("/properties?create=APARTMENT"),
+    [navigate]
+  );
+
+  const goToNewSchool = useCallback(
+    () => navigate("/schools?create=true"),
+    [navigate]
+  );
 
   return (
     <nav className="navbar">
@@ -18,14 +26,16 @@ export default function Navbar() {
 
       {/* BOTONES DERECHA */}
       <div className="right-side">
-        <button onClick={() => navigate("/properties?create=APARTMENT")}>
+        <button onClick={goToNewApartment}>
           + Apartment
         </button>
 
-        <button onClick={() => navigate("/schools?create=true")}>
+        <button onClick={goToNewSchool}>
           + School
         </button>
       </div>
     </nav>
   );
 }
+
+export default React.memo(Navbar);

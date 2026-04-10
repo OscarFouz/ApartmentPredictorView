@@ -1,61 +1,55 @@
 // src/App.jsx
+import { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Providers globales
-import { RoleProvider } from "./context/RoleProvider";
-import { ThemeProvider } from "./context/ThemeProvider";
-import { PropertyProvider } from "./context/PropertyProvider";
-import { FiltersProvider } from "./context/FiltersProvider";
+import { AppProviders } from "./context/AppProviders";
 
 // Layout
 import Layout from "./layout/Layout";
 
 // Páginas principales
-import PropertiesPage from "./pages/PropertiesPage";
-import OwnersPage from "./pages/OwnersPage";
-import DuplexPage from "./pages/DuplexPage";
-import HousePage from "./pages/HousePage";
-import TownHousePage from "./pages/TownHousePage";
-import ReviewPage from "./pages/ReviewPage";
-import SchoolPage from "./pages/SchoolPage";
-import ContractPage from "./pages/ContractPage";
+const PropertiesPage = lazy(() => import("./pages/PropertiesPage"));
+const OwnersPage = lazy(() => import("./pages/OwnersPage"));
+const DuplexPage = lazy(() => import("./pages/DuplexPage"));
+const HousePage = lazy(() => import("./pages/HousePage"));
+const TownHousePage = lazy(() => import("./pages/TownHousePage"));
+const ReviewPage = lazy(() => import("./pages/ReviewPage"));
+const SchoolPage = lazy(() => import("./pages/SchoolPage"));
+const ContractPage = lazy(() => import("./pages/ContractPage"));
 
 // Páginas de relaciones
-import PropertyOwnerRelationsPage from "./pages/relations/PropertyOwnerRelationsPage";
-import PropertySchoolRelationsPage from "./pages/relations/PropertySchoolRelationsPage";
-import PropertyReviewRelationsPage from "./pages/relations/PropertyReviewRelationsPage";
-import PropertyContractRelationsPage from "./pages/relations/PropertyContractRelationsPage";
+const PropertyOwnerRelationsPage = lazy(() => import("./pages/relations/PropertyOwnerRelationsPage"));
+const PropertySchoolRelationsPage = lazy(() => import("./pages/relations/PropertySchoolRelationsPage"));
+const PropertyReviewRelationsPage = lazy(() => import("./pages/relations/PropertyReviewRelationsPage"));
+const PropertyContractRelationsPage = lazy(() => import("./pages/relations/PropertyContractRelationsPage"));
 
 export default function App() {
   return (
-    <RoleProvider>
-      <ThemeProvider>
-        <PropertyProvider>
-          <FiltersProvider>
-            <Router>
-              <Layout>
-                <Routes>
-                  <Route path="/properties" element={<PropertiesPage />} />
-                  <Route path="/owners" element={<OwnersPage />} />
-                  <Route path="/duplex" element={<DuplexPage />} />
-                  <Route path="/houses" element={<HousePage />} />
-                  <Route path="/townhouses" element={<TownHousePage />} />
-                  <Route path="/reviews" element={<ReviewPage />} />
-                  <Route path="/schools" element={<SchoolPage />} />
-                  <Route path="/contracts" element={<ContractPage />} />
+    <AppProviders>
+      <Router>
+        <Suspense fallback={<div>Cargando...</div>}>
+          <Layout>
+            <Routes>
+              <Route path="/properties" element={<PropertiesPage />} />
+              <Route path="/owners" element={<OwnersPage />} />
+              <Route path="/duplex" element={<DuplexPage />} />
+              <Route path="/houses" element={<HousePage />} />
+              <Route path="/townhouses" element={<TownHousePage />} />
+              <Route path="/reviews" element={<ReviewPage />} />
+              <Route path="/schools" element={<SchoolPage />} />
+              <Route path="/contracts" element={<ContractPage />} />
 
-                  <Route path="/relations/property-owner" element={<PropertyOwnerRelationsPage />} />
-                  <Route path="/relations/property-school" element={<PropertySchoolRelationsPage />} />
-                  <Route path="/relations/property-review" element={<PropertyReviewRelationsPage />} />
-                  <Route path="/relations/property-contract" element={<PropertyContractRelationsPage />} />
+              <Route path="/relations/property-owner" element={<PropertyOwnerRelationsPage />} />
+              <Route path="/relations/property-school" element={<PropertySchoolRelationsPage />} />
+              <Route path="/relations/property-review" element={<PropertyReviewRelationsPage />} />
+              <Route path="/relations/property-contract" element={<PropertyContractRelationsPage />} />
 
-                  <Route path="*" element={<PropertiesPage />} />
-                </Routes>
-              </Layout>
-            </Router>
-          </FiltersProvider>
-        </PropertyProvider>
-      </ThemeProvider>
-    </RoleProvider>
+              <Route path="*" element={<PropertiesPage />} />
+            </Routes>
+          </Layout>
+        </Suspense>
+      </Router>
+    </AppProviders>
   );
 }

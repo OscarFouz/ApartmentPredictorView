@@ -1,5 +1,5 @@
 // src/context/PropertyProvider.jsx
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useCallback, useMemo } from "react";
 import { PropertyContext } from "./PropertyContext";
 import { propertyReducer } from "./reducers/propertyReducer";
 
@@ -16,35 +16,47 @@ export function PropertyProvider({ children }) {
   });
 
   useEffect(() => {
-    getAllProperties().then(data =>
+    getAllProperties().then((data) =>
       dispatch({ type: "LOAD", payload: data })
     );
   }, []);
 
-  const addProperty = (data) =>
-    createProperty(data).then(res =>
-      dispatch({ type: "ADD", payload: res })
-    );
+  const addProperty = useCallback(
+    (data) =>
+      createProperty(data).then((res) =>
+        dispatch({ type: "ADD", payload: res })
+      ),
+    []
+  );
 
-  const updatePropertyFn = (id, data) =>
-    updateProperty(id, data).then(res =>
-      dispatch({ type: "UPDATE", payload: res })
-    );
+  const updatePropertyFn = useCallback(
+    (id, data) =>
+      updateProperty(id, data).then((res) =>
+        dispatch({ type: "UPDATE", payload: res })
+      ),
+    []
+  );
 
-  const deletePropertyFn = (id) =>
-    deleteProperty(id).then(() =>
-      dispatch({ type: "DELETE", payload: id })
-    );
+  const deletePropertyFn = useCallback(
+    (id) =>
+      deleteProperty(id).then(() =>
+        dispatch({ type: "DELETE", payload: id })
+      ),
+    []
+  );
+
+  const value = useMemo(
+    () => ({
+      properties: state.properties,
+      addProperty,
+      updateProperty: updatePropertyFn,
+      deleteProperty: deletePropertyFn,
+    }),
+    [state.properties, addProperty, updatePropertyFn, deletePropertyFn]
+  );
 
   return (
-    <PropertyContext.Provider
-      value={{
-        properties: state.properties,
-        addProperty,
-        updateProperty: updatePropertyFn,
-        deleteProperty: deletePropertyFn,
-      }}
-    >
+    <PropertyContext.Provider value={value}>
       {children}
     </PropertyContext.Provider>
   );

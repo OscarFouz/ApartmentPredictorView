@@ -1,14 +1,12 @@
 // src/context/RoleProvider.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { RoleContext } from "./RoleContext";
 
 import { getAllReviewers } from "../services/reviewerService";
 
 export function RoleProvider({ children }) {
   const [role, setRole] = useState(localStorage.getItem("role") || "USER");
-
   const [reviewers, setReviewers] = useState([]);
-
   const [selectedReviewerId, setSelectedReviewerId] = useState(
     localStorage.getItem("reviewerId") || "ADMIN"
   );
@@ -26,7 +24,7 @@ export function RoleProvider({ children }) {
     });
   }, []);
 
-  const selectReviewer = (id) => {
+  const selectReviewer = useCallback((id) => {
     setSelectedReviewerId(id);
     localStorage.setItem("reviewerId", id);
 
@@ -37,17 +35,20 @@ export function RoleProvider({ children }) {
       setRole("USER");
       localStorage.setItem("role", "USER");
     }
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      role,
+      reviewers,
+      selectedReviewerId,
+      selectReviewer,
+    }),
+    [role, reviewers, selectedReviewerId, selectReviewer]
+  );
 
   return (
-    <RoleContext.Provider
-      value={{
-        role,
-        reviewers,
-        selectedReviewerId,
-        selectReviewer,
-      }}
-    >
+    <RoleContext.Provider value={value}>
       {children}
     </RoleContext.Provider>
   );
